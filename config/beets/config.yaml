@@ -9,46 +9,71 @@ plugins:
   - permissions
   - bareasc
   - unimported
+  - the
 per_disc_numbering: no
 
+original_date: yes
+format_item: "$artist / [$year] $album / $title"
+format_album: "$albumartist / [$year] $album ($albumtype)"
+sort_item:
+  - artist+
+  - year+
+  - album+
+  - disc+
+  - track+
+sort_album:
+  - albumartist+
+  - year+
+  - album+
+
 directory: ~/music
-library: ~/music/db
+library: ~/music/.db
 convert:
-  auto: yes
-  dest: ~/music/converted
-  embed: yes
+  dest: ~/music/.converted
+  auto: no
+  embed: no
   copy_album_art: yes
   never_convert_lossy_files: yes
-  format: opus
+  format: flac
   formats:
-    mp3: ffmpeg -i $source -y -vn -aq 10 -ab 320k -ac 2 -ar 48000 $dest
-    ogg: ffmpeg -i $source -y -vn -acodec libvorbis -aq 10 $dest
     opus: ffmpeg -i $source -y -vn -acodec libopus -ab 256k -vbr on $dest
+    mp3: ffmpeg -i $source -y -vn -aq 10 -ab 320k -ac 2 -ar 48000 $dest
+    flac: >
+      ffmpeg -i $source -y -vn
+      -af aresample=resampler=soxr:dither_method=triangular
+      -ar 44100 -sample_fmt s16
+      -c:a flac $dest
 albumtypes:
   types:
     - ep: 'EP'
     - single: 'Single'
     - live: 'Live'
     - remix: 'Remix'
+    - webrip: 'WebRip'
   bracket: '[]'
 paths:
-  default: albums/$albumartist/$year - $album%if{$atypes, }$atypes/%if{$multidisc,$disc-}$track $title
-  singleton: singletons/$artist - $title
-  comp: compilations/$year - $album%aunique{}%if{$atypes, }$atypes/%if{$multidisc,$disc-}$track $title
-  albumtype:soundtrack: soundtracks/$year - $album%aunique{}%if{$atypes, }$atypes/%if{$multidisc,$disc-}$track $title
-  albumtype:stream: streams/$albumartist/$year - $album%aunique{}%if{$atypes, }$atypes/%if{$multidisc,$disc-}$track $title
+  default: albums/%the{$albumartist}/$realyear - $album%if{$atypes, }$atypes/$discprefix$track $title$quality
+  singleton: non-albums/$artist - $album - $title$quality
+  comp: compilations/$realyear - $albumartist - $album%aunique{}%if{$atypes, }$atypes/$discprefix$track $artist - $title$quality
+  albumtype:non-album: non-albums/%the{$albumartist}/$realyear - $album%aunique{}%if{$atypes, }$atypes/$discprefix$track $title$quality
+  albumtype:soundtrack: soundtracks/$album ($realyear)%aunique{}%if{$atypes, }$atypes/$discprefix$track $title$quality
 item_fields:
-  multidisc: 1 if disctotal > 1 else 0
+  realyear: |
+    '%0.4d' % (original_year or year)
+  discprefix: |
+    '%d-' % disc if disctotal > 1 else ''
+  quality: |
+    ' [%s%dkbps]' % (('WebRip@' if "webrip" in albumtypes else ""), bitrate / 1000) if format != "FLAC" else ' [%d-%d]' % (bitdepth, samplerate / 1000)
 import:
   autotag: no
-  write: no
-  incremental: yes
-  log: ~/music/beet.log
+  write: yes
+  log: ~/music/.log
 fetchart:
   auto: yes
+  maxwidth: 1200
 permissions:
-  file: 640
-  dir: 750
+  file: 644
+  dir: 755
 unimported:
   ignore_extensions: nsp ndignore log
   ignore_subdirectories: unsorted

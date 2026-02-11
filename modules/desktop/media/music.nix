@@ -21,6 +21,7 @@ in {
       shntool
       cuetools
       flac
+      spek           # spectrum analysis
     ];
 
     home.configFile = {
