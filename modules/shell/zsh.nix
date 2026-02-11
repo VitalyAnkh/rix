@@ -54,6 +54,8 @@ in {
       ripgrep  # a better grep
       tokei    # for code statistics
       unar
+      zip
+      unzip
       vim
     ];
 
