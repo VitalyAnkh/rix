@@ -9,7 +9,7 @@ with hey.lib;
 let cfg = config.modules.editors.emacs;
     emacs = with pkgs; (emacsPackagesFor emacs-git-pgtk).emacsWithPackages
       (epkgs: with epkgs; [
-        treesit-grammars.with-all-grammars
+        # treesit-grammars.with-all-grammars
         vterm
         mu4e
       ]);
