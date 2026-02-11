@@ -22,7 +22,7 @@
 
       # Extras (imported directly by modules/hosts that need them)
       dms.url = "github:AvengeMedia/DankMaterialShell";
-      dms.inputs.nixpkgs.follows = "nixpkgs-unstable";
+      dms.inputs.nixpkgs.follows = "nixpkgs";
       emacs-overlay.url = "github:nix-community/emacs-overlay";
       emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";
       nixos-hardware.url = "github:nixos/nixos-hardware";
