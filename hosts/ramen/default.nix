@@ -97,6 +97,8 @@ with builtins;
 
     # If I want to sleep the system, I'll do it myself.
     services.logind.settings.Login.HandleLidSwitch = "ignore";
+    # Tapping power button should do nothing
+    services.logind.settings.Login.HandlePowerKey = "ignore";
 
     boot.initrd = {
       kernelModules = [ "dm-snapshot" ];

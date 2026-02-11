@@ -90,7 +90,8 @@ with builtins;
 
   ## Local config
   config = { pkgs, ... }: {
-
+    # Tapping power button should do nothing
+    services.logind.settings.Login.HandlePowerKey = "ignore";
   };
 
   ## Hardware config
