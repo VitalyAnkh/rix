@@ -58,18 +58,11 @@ in {
       MOZ_ENABLE_WAYLAND = "1";
     };
 
-    # Hyprland's aquamarine requires newer MESA drivers.
-    hardware.graphics = {
-      package = pkgs.unstable.mesa;
-      package32 = pkgs.unstable.pkgsi686Linux.mesa;
-    };
-
     programs.hyprland = {
       enable = true;
       # withUWSM = true;
       xwayland.enable = true;
       package = pkgs.unstable.hyprland;
-      portalPackage = pkgs.unstable.xdg-desktop-portal-hyprland;
     };
 
     programs.dank-material-shell = {
