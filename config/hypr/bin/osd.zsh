@@ -10,10 +10,11 @@
 #   general OSD display command.
 #
 # DEPENDENCIES:
+#   dms
 #   notify-send
 #
 # OPTIONAL DEPENDENCIES:
-#   pamixer, playerctl   -- for osd.d/volume.zsh
+#   dms, playerctl       -- for osd.d/volume.zsh
 #   brightnessctl        -- for osd.d/brightness.zsh
 
 hey.osd.display() {

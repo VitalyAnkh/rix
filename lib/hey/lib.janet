@@ -274,14 +274,14 @@
           (or paths exec-path))))
 
 (defn- wm []
-  (let [desktop (os/getenv "XDG_CURRENT_DESKTOP")]
-    (case desktop
-      "Hyprland" :hypr
-      nil        (error "XDG_CURRENT_DESKTOP not set")
-      (errorf "Unrecognized desktop: %s" desktop))))
+  (let [desktop (string/ascii-lower (os/getenv "XDG_CURRENT_DESKTOP"))]
+    (cond (string/find "hyprland" desktop) :hypr
+          (= desktop nil) (error "XDG_CURRENT_DESKTOP not set")
+          (errorf "Unrecognized desktop: %s" desktop))))
 
 (def- *paths*
   {:home     [|(flake :path)]
+   :assets   [:home "assets"]
    :bin      [:home "bin"]
    :cache    [|(path/xdg :cache "hey")]
    :config   [:home "config"]
@@ -292,8 +292,6 @@
    :modules  [:home "modules"]
    :runtime  [|(path/xdg :runtime "hey")]
    :state    [|(path/xdg :state "hey")]
-   :themes   [:modules "themes"]
-   :theme    [:themes |(or (flake :theme) (error "No active theme"))]
    :wm       [:config wm]
    :wm*      [|(path/xdg :config) wm]
    :profile  ["/nix/var/nix/profiles/system"]

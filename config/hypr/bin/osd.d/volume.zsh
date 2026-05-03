@@ -5,7 +5,7 @@
 #   volume [-i|-o|-p] [[+/-]LEVEL|toggle]
 #
 # DESCRIPTION:
-#   Manipulate input or output volume levels via pamixer, or the volume of any
+#   Manipulate input or output volume levels via dms, or the volume of any
 #   player controllable via playerctl, then follow up with an OSD popup.
 #
 #   Requires a notification program like mako that supports progress bars.
@@ -45,6 +45,8 @@ if [[ $player ]]; then
 
   hey .play-sound $sound
 else
+  hey.requires dms
+
   local command=()
   case $1 in
     mute)    command=( mute )      ;;

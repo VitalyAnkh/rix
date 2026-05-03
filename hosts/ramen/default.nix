@@ -13,7 +13,6 @@ with builtins;
 
   ## Flake modules
   modules = {
-    theme.active = "autumnal";
     xdg.ssh.enable = true;
 
     profiles = {
@@ -33,7 +32,6 @@ with builtins;
       hyprland = rec {
         enable = true;
         monitors = [ { output = "eDP-1"; primary = true; } ];
-        idle.time = 300;
         extraConfig = ''
           workspace=special:term,gapsin:3,gapsout:100,on-created-empty:hey .scratch term
           workspace=special:pad,gapsin:3,gapsout:40 80 40 80
@@ -52,12 +50,12 @@ with builtins;
       browsers.default = "librewolf";
       browsers.librewolf.enable = true;
       media.cad.enable = true;
-      media.daw.enable = true;
+      # media.daw.enable = true;
       media.graphics.enable = true;
       media.music.enable = true;
       media.video.enable = true;
-      media.video.capture.enable = true;
-      media.pdf.enable = true;
+      # media.video.capture.enable = true;
+      # media.pdf.enable = true;
     };
     dev = {
       cc.enable = true;
@@ -68,7 +66,7 @@ with builtins;
       vim.enable = true;
     };
     shell = {
-      vaultwarden.enable = true;
+      # vaultwarden.enable = true;
       direnv.enable = true;
       git.enable = true;
       gnupg.enable = true;

@@ -41,14 +41,14 @@ in {
 
       # Replaces Photoshop
       (optionals cfg.raster.enable [
-        (unstable.gimp3-with-plugins.override {
-          plugins = with unstable.gimp3Plugins; [
+        (gimp3-with-plugins.override {
+          plugins = with gimp3Plugins; [
             # bimp            # batch image manipulation
             # resynthesizer   # content-aware scaling in gimp
             gmic            # an assortment of extra filters
           ];
         })
-        unstable.krita   # But Krita is better for digital illustration
+        krita   # But Krita is better for digital illustration
       ]) ++
 
       # Sprite sheets & animation

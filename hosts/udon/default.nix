@@ -8,7 +8,6 @@ with builtins;
   system = "x86_64-linux";
 
   modules = {
-    theme.active = "autumnal";
     xdg.ssh.enable = true;
 
     profiles = {
@@ -43,10 +42,6 @@ with builtins;
             position = "1280x0"; }
         ];
         extraConfig = ''
-          # REVIEW: Might be a hyprland bug, but an "Unknown-1" display is
-          #   always created and reserves some desktop space, so I disable it.
-          monitor = Unknown-1,disable
-
           # Bind fixed workspaces to external monitors
           workspace = name:left, monitor:DP-3, default:true
           workspace = name:right, monitor:DP-2, default:true
@@ -54,17 +49,17 @@ with builtins;
 
           # Scroll by holding down a side button, because the wheel is broken
           device {
-              name = mosart-semi.-2.4g-wireless-mouse
-              scroll_method = on_button_down
-              scroll_button = 276
+            name = mosart-semi.-2.4g-wireless-mouse
+            scroll_method = on_button_down
+            scroll_button = 276
           }
 
           # To address 1px overscan on my U2724D's
           general {
-              gaps_out = 0,0,1,0
+            gaps_out = 0,0,1,0
           }
 
-          exec-once = hyprctl keyword monitor HDMI-A-1,disable
+          exec = hyprctl keyword monitor HDMI-A-1,disable
         '';
       };
       term.default = "foot";
@@ -83,12 +78,12 @@ with builtins;
       browsers.default = "librewolf";
       browsers.librewolf.enable = true;
       media.cad.enable = true;
-      media.daw.enable = true;
+      # media.daw.enable = true;
       media.graphics.enable = true;
       media.music.enable = true;
       media.video.enable = true;
-      media.video.capture.enable = true;
-      media.pdf.enable = true;
+      # media.video.capture.enable = true;
+      # media.pdf.enable = true;
     };
     dev = {
       cc.enable = true;
@@ -99,7 +94,7 @@ with builtins;
       vim.enable = true;
     };
     shell = {
-      vaultwarden.enable = true;
+      # vaultwarden.enable = true;
       direnv.enable = true;
       git.enable = true;
       gnupg.enable = true;
@@ -195,6 +190,12 @@ with builtins;
         fsType = "nfs";
         options = [ "noauto" "nofail" "noatime" "nfsvers=4.2" "x-systemd.automount" "x-systemd.idle-timeout=600" ];
       };
+
+      # "/media/llissner" = {
+      #   device = "nas0.lan:/mnt/nas/users/llissner/files";
+      #   fsType = "nfs";
+      #   options = [ "noauto" "nofail" "noatime" "nfsvers=4.2" "x-systemd.automount" "x-systemd.idle-timeout=600" ];
+      # };
     };
     swapDevices = [];
   };

@@ -30,11 +30,11 @@ in mkIf (any (s: hasPrefix "gpu/nvidia" s) hardware) (mkMerge [
         # https://github.com/NVIDIA/open-gpu-kernel-modules#compatible-gpus
         # Only available from driver 515.43.04+. Currently alpha-quality/buggy,
         # so false is currently the recommended setting.
-        open = mkDefault false;
+        open = mkDefault true;
         # Save some idle watts.
         powerManagement.enable = true;  # see NixOS/nixos-hardware#348
         modesetting.enable = true;
-        package = config.boot.kernelPackages.nvidiaPackages.beta;
+        package = config.boot.kernelPackages.nvidiaPackages.latest;
       };
     };
 
@@ -59,7 +59,7 @@ in mkIf (any (s: hasPrefix "gpu/nvidia" s) hardware) (mkMerge [
     };
 
     # Cajole Firefox into video-acceleration (or try).
-    modules.desktop.browsers.librewolf.settings = {
+    programs.firefox.preferences = {
       "media.ffmpeg.vaapi.enabled" = true;
       "gfx.webrender.enabled" = true;
     };

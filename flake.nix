@@ -13,22 +13,19 @@
   inputs = 
     {
       # Core dependecies
-      nixpkgs.url = "nixpkgs/nixos-25.11";
-      nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
-      home-manager.url = "github:nix-community/home-manager/release-25.11";
+      nixpkgs.url = "nixpkgs/nixos-unstable";
+      home-manager.url = "github:nix-community/home-manager";
       home-manager.inputs.nixpkgs.follows = "nixpkgs";
       agenix.url = "github:ryantm/agenix";
       agenix.inputs.nixpkgs.follows = "nixpkgs";
 
       # Extras (imported directly by modules/hosts that need them)
-      dms.url = "github:AvengeMedia/DankMaterialShell";
-      dms.inputs.nixpkgs.follows = "nixpkgs";
       emacs-overlay.url = "github:nix-community/emacs-overlay";
       emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";
       nixos-hardware.url = "github:nixos/nixos-hardware";
     };
 
-  outputs = inputs @ { self, nixpkgs, nixpkgs-unstable, nixos-hardware, ... }:
+  outputs = inputs @ { self, nixpkgs, nixos-hardware, ... }:
     let
       args = {
         inherit self;

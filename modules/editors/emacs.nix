@@ -9,9 +9,7 @@ with hey.lib;
 let cfg = config.modules.editors.emacs;
     emacs = with pkgs; (emacsPackagesFor emacs-git-pgtk).emacsWithPackages
       (epkgs: with epkgs; [
-        # treesit-grammars.with-all-grammars
         vterm
-        mu4e
       ]);
 in {
   options.modules.editors.emacs = {
@@ -47,9 +45,6 @@ in {
       zstd                # for undo-fu-session/undo-tree compression
 
       ## Module dependencies
-      # :email mu4e
-      mu
-      isync
       # :checkers spell
       (aspellWithDicts (ds: with ds; [ en en-computers en-science ]))
       # :emacs dired +dirvish
@@ -67,7 +62,7 @@ in {
       # :lang nix
       age
       # :lang python
-      unstable.ty
+      ty
     ];
 
     environment.variables.PATH = [ "$XDG_CONFIG_HOME/emacs/bin" ];

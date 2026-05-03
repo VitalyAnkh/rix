@@ -11,7 +11,7 @@ in {
   config = {
     assertions =
       let isEnabled = _: v: v.enable or false;
-      hasDesktopEnabled = cfg:
+          hasDesktopEnabled = cfg:
               (anyAttrs isEnabled cfg)
               || !(anyAttrs (_: v: isAttrs v && anyAttrs isEnabled v) cfg);
       in [
@@ -29,9 +29,20 @@ in {
       fontDir.enable = true;
       enableGhostscriptFonts = true;
       packages = with pkgs; [
+        # For GUIs
+        fira
         ubuntu-classic
+
+        # For editors/terminals
         dejavu_fonts
+        fira-code
+        fira-code-symbols
         symbola
+        nerd-fonts.jetbrains-mono
+
+        # For design software
+        montserrat
+        open-sans
       ];
     };
 
@@ -41,7 +52,7 @@ in {
       sox        # for `play` utility
     ];
 
-    user.packages = with pkgs.unstable; [
+    user.packages = with pkgs; [
       # Program     Substitutes for
       ripdrag       # xdragon
       wev           # xev

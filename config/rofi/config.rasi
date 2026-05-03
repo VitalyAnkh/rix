@@ -170,22 +170,6 @@ configuration {
   /* me-accept-custom:           env(ROFI_ME_ACCEPT_CUSTOM, "Control+MouseDPrimary"); */
 }
 
-/* Universal fixes and resets */
-* {
-  background-color: transparent;
-  text-color: inherit;
-}
-
-window {
-  enabled: true;
-  anchor: env(ROFI_ANCHOR, north);
-  location: north;
-  x-offset: env(ROFI_X, 0);
-  y-offset: env(ROFI_Y, 40%);
-  transparency: "real";
-  background-color: transparent;
-}
-
 /* Reset! */
 window, mainbox {
   spacing: 0;
@@ -209,16 +193,5 @@ icon, icon-current-entry, prompt, num-filtered-rows {
   expand: false;
 }
 
-icon {
-  filename: env(ROFI_ICON, "search-symbolic");
-}
-
-entry {
-  placeholder: env(ROFI_PLACEHOLDER, "Search...");
-  placeholder-markup: true;
-  cursor: text;
-  blink: true;
-}
-
 /* Import nix-generated files */
-@import "./config.theme.rasi"
+@import "dank-colors.rasi"

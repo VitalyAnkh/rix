@@ -21,12 +21,12 @@ dotfiles over there.
 
 ------
 
-| **Shell:**    | zsh + zgenom            |
-| **WM:**       | hyprland + waybar       |
-| **Editor:**   | [Doom Emacs][doomemacs] |
-| **Terminal:** | foot                    |
-| **Launcher:** | rofi                    |
-| **Browser:**  | firefox                 |
+| **Shell:**    | zsh + zgenom                   |
+| **WM:**       | hyprland + dank-material-shell |
+| **Editor:**   | [Doom Emacs][doomemacs]        |
+| **Terminal:** | foot                           |
+| **Launcher:** | rofi                           |
+| **Browser:**  | librewolf                      |
 
 -----
 

@@ -12,7 +12,7 @@ in {
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      unstable.lutris
+      lutris
     ];
 
     # Better for steam proton games

@@ -54,6 +54,14 @@ case $host in
     else
       hey.error "Couldn't connect to nas0.lan"
     fi
+
+    if available-host soba.lan; then
+      if ssh soba.lan test -s ~/Media/external; then
+        hey.do rcpd /media/backup/nas0/hlissner/ soba.lan:~/Media/external
+      fi
+    else
+      hey.error "Couldn't connect to soba.lan"
+    fi
     ;;
 
   ramen)
@@ -72,8 +80,12 @@ case $host in
 
   soba)
     if available-host nas0.lan; then
-      hey.do rcpd nas0.lan:~/files/photos/ ~/Media/backup1/photos/
-      hey.do rcpd nas0.lan:~/files/ ~/Media/backup0/
+      if [[ -f ~/Media/backup0/.backup ]]; then
+        hey.do rcpd nas0.lan:~/files/ ~/Media/backup0/
+        if [[ -f ~/Media/backup1/.backup ]]; then
+          hey.do rcpd ~/Media/backup0/ ~/Media/backup1/
+        fi
+      fi
     else
       hey.error "Couldn't connect to nas0.lan"
     fi

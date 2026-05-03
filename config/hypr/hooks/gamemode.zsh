@@ -32,7 +32,6 @@ case $1 in
       keyword animations:enabled 1 \; \
       keyword misc:vrr 0
     notify-send "   Gamemode ended!"
-    sleep 1
-    # systemctl stop --user gamemoded.service
+    # { sleep 3; systemctl stop --user gamemoded.service; }
     ;;
 esac

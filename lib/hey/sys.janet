@@ -3,7 +3,7 @@
 (use sh)
 
 (defn play-sound [name &named volume]
-  (when-let [file (path/sibling :file (path :theme "sounds" name)
+  (when-let [file (path/sibling :file (path :assets "sounds" name)
                                 ".ogg" ".wav" ".mp3")]
     (os/spawn ["play" "-q" ;(opts "-v" volume) file] :pd)))
 

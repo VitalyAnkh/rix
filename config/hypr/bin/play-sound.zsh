@@ -12,7 +12,7 @@ if (( $# == 0 )); then
   exit 2
 fi
 
-local dir=$(hey path theme sounds)
+local dir=$(hey path assets sounds)
 if [[ "$1" == "ls" ]]; then
   ls -l "$dir"
 else
