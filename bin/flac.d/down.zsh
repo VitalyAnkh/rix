@@ -4,7 +4,7 @@
 # SYNOPSIS:
 #   hey .flac down *.flac
 
-_flacdown() {
+main() {
   local file="$1"
   local bps=$(metaflac --show-bps "$file")
   local rate=$(metaflac --show-sample-rate "$file")
@@ -28,6 +28,4 @@ _flacdown() {
     "$destfile"
 }
 
-for f in "$@"; do
-  _flacdown "$f"
-done
+for f in "$@"; do main "$f"; done
