@@ -15,16 +15,16 @@
 
   selected: @bg-light;
 
-  font-mono-0: "{{ fonts.mono }} 10";
-  font-mono-1: "{{ fonts.mono }} 12";
-  font-mono-2: "{{ fonts.mono }} 14";
-  font-mono-3: "{{ fonts.mono }} 16";
-  font-mono-4: "{{ fonts.mono }} 20";
+  font-mono-0: "{{ theme.fonts.mono }} 10";
+  font-mono-1: "{{ theme.fonts.mono }} 12";
+  font-mono-2: "{{ theme.fonts.mono }} 14";
+  font-mono-3: "{{ theme.fonts.mono }} 16";
+  font-mono-4: "{{ theme.fonts.mono }} 20";
 
-  font-sans-0: "{{ fonts.sans }} 14";
-  font-sans-1: "{{ fonts.sans }} 16";
-  font-sans-2: "{{ fonts.sans }} 18";
-  font-sans-3: "{{ fonts.sans }} 22";
+  font-sans-0: "{{ theme.fonts.sans }} 14";
+  font-sans-1: "{{ theme.fonts.sans }} 16";
+  font-sans-2: "{{ theme.fonts.sans }} 18";
+  font-sans-3: "{{ theme.fonts.sans }} 22";
 
   pad1: 4px;
   pad2: 8px;

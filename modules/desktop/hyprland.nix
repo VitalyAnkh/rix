@@ -72,9 +72,15 @@ in {
     };
 
     hey = {
-      info.hypr = {
-        primaryMonitor = primaryMonitor.output or null;
-        monitors = cfg.monitors;
+      info = {
+        hypr = {
+          primaryMonitor = primaryMonitor.output or null;
+          monitors = cfg.monitors;
+        };
+        theme.fonts = {
+          mono = "JetBrainsMono Nerd Font";
+          sans = "Fira Sans";
+        };
       };
       hooks = rec {
         # Launch my hyprlock-powered, pseudo-login screen on `hey hook
@@ -101,7 +107,7 @@ in {
       "matugen/config.toml".text = ''
         [config]
         version_check = false
-        import_json_files = ["~/.config/matugen/custom.json"]
+        import_json_files = ["~/.local/share/hey/info.json"]
 
         [templates.hyprland]
         input_path = "${hey.configDir}/matugen/templates/hyprland.conf"
@@ -122,15 +128,6 @@ in {
           input_path = "${hey.configDir}/matugen/templates/foot.ini"
           output_path = "~/.config/foot/dank-colors.ini"
         ''}
-      '';
-
-      "matugen/custom.json".text = ''
-        {
-          "fonts": {
-            "mono": "JetBrainsMono Nerd Font",
-            "sans": "Fira Sans"
-          }
-        }
       '';
 
       "hypr" = {
