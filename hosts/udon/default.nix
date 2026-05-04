@@ -59,7 +59,7 @@ with builtins;
             gaps_out = 0,0,1,0
           }
 
-          exec = hyprctl keyword monitor HDMI-A-1,disable
+          exec-once = hyprctl keyword monitor HDMI-A-1,disable
         '';
       };
       term.default = "foot";
