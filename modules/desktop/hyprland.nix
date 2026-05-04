@@ -61,6 +61,7 @@ in {
       };
       enableSystemMonitoring = true;
       enableDynamicTheming = true;
+      quickshell.package = hey.inputs.quickshell.packages."${pkgs.stdenv.hostPlatform.system}".default;
     };
 
     services.greetd = {
