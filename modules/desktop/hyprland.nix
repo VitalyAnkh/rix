@@ -34,7 +34,6 @@ in {
 
       ## For CLIs
       gromit-mpx     # for drawing on the screen
-      pamixer        # for volume control
       wlr-randr      # for monitors that hyprctl can't handle
       wf-recorder    # for screencasting
     ];

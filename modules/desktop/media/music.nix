@@ -15,8 +15,6 @@ in {
       playerctl      # to control feishen
       yt-dlp
       picard         # for editing tags
-      id3v2          # for editing tags (CLI)
-
       r128gain
       shntool
       cuetools
