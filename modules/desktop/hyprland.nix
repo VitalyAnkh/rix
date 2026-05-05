@@ -118,6 +118,11 @@ in {
           input_path = "${hey.configDir}/matugen/templates/tmux.conf"
           output_path = "~/.config/tmux/dank-colors.conf"
         ''}
+        ${optionalString config.modules.desktop.browsers.librewolf.enable ''
+          [templates.librewolf]
+          input_path = "${hey.configDir}/matugen/templates/librewolf.css"
+          output_path = "${config.home.fakeDir}/.librewolf/hlissner.default/chrome/userChrome.colors.css"
+        ''}
         ${optionalString config.modules.desktop.apps.rofi.enable ''
           [templates.rofi]
           input_path = "${hey.configDir}/matugen/templates/rofi.rasi"

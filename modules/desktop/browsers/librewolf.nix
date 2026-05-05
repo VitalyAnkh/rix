@@ -210,22 +210,6 @@ in {
     home =
       let localDir = "${config.home.fakeDir}/.librewolf";
       in {
-        # configFile."tridactyl" = {
-        #   source = "${hey.configDir}/tridactyl";
-        #   recursive = true;
-        # };
-
-        # programs.firefox.nativeMessagingHosts.tridactyl doesn't seem to be
-        # enough, so install the native messenger manually.
-        # fakeFile.".mozilla/native-messaging-hosts/tridactyl.json".source =
-        #   let version = "0.3.6";
-        #       manifestURL = "https://raw.githubusercontent.com/tridactyl/native_messenger/${version}/tridactyl.json";
-        #       manifest = pkgs.runCommand "generateTridactylManifest" {} ''
-        #       cp "${builtins.fetchurl manifestURL}" "$out"
-        #       sed -i.bak "s%REPLACE_ME_WITH_SED%${tridactyl-native}%" "$out"
-        #     '';
-        #   in "${pkgs.tridactyl-native}/lib/mozilla/native-messaging-hosts/tridactyl.json";
-
         # Use fixed profile name so it can be targeted in themes and scripts
         file."${localDir}/profiles.ini".text = ''
           [Profile0]
@@ -249,8 +233,16 @@ in {
             '';
           };
 
-        file."${localDir}/${cfg.profileName}.default/chrome/userChrome.css" =
-          mkIf (cfg.userChrome != "") { text = cfg.userChrome; };
+        file."${localDir}/${cfg.profileName}.default/chrome/userChrome.css".text = ''
+          @-moz-document url(chrome://browser/content/browser.xul),
+                         url(chrome://browser/content/browser.xhtml)
+          {
+            @import url("${localDir}/${cfg.profileName}.default/chrome/userChrome.colors.css");
+            @import url("${hey.configDir}/librewolf/userChrome.css");
+          }
+
+          ${optionalString (cfg.userChrome != "") cfg.userChrome}
+        '';
 
         file."${localDir}/${cfg.profileName}.default/chrome/userContent.css" =
           mkIf (cfg.userContent != "") { text = cfg.userContent; };
