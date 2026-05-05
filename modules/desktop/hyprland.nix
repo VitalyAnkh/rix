@@ -107,16 +107,16 @@ in {
       "matugen/config.toml".text = ''
         [config]
         version_check = false
-        import_json_files = ["~/.local/share/hey/info.json"]
+        import_json_files = ["${config.home.dataDir}/hey/info.json"]
 
         [templates.hyprland]
         input_path = "${hey.configDir}/matugen/templates/hyprland.conf"
-        output_path = "~/.config/hypr/hyprland.colors.conf"
+        output_path = "${config.home.configDir}/hypr/hyprland.colors.conf"
 
         ${optionalString config.modules.shell.tmux.enable ''
           [templates.tmux]
           input_path = "${hey.configDir}/matugen/templates/tmux.conf"
-          output_path = "~/.config/tmux/dank-colors.conf"
+          output_path = "${config.home.configDir}/tmux/dank-colors.conf"
         ''}
         ${optionalString config.modules.desktop.browsers.librewolf.enable ''
           [templates.librewolf]
@@ -126,12 +126,12 @@ in {
         ${optionalString config.modules.desktop.apps.rofi.enable ''
           [templates.rofi]
           input_path = "${hey.configDir}/matugen/templates/rofi.rasi"
-          output_path = "~/.config/rofi/themes/dank-colors.rasi"
+          output_path = "${config.home.configDir}/rofi/themes/dank-colors.rasi"
         ''}
         ${optionalString config.modules.desktop.term.foot.enable ''
           [templates.foot]
           input_path = "${hey.configDir}/matugen/templates/foot.ini"
-          output_path = "~/.config/foot/dank-colors.ini"
+          output_path = "${config.home.configDir}/foot/dank-colors.ini"
         ''}
       '';
 
