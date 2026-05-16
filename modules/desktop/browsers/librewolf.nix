@@ -234,13 +234,7 @@ in {
           };
 
         file."${localDir}/${cfg.profileName}.default/chrome/userChrome.css".text = ''
-          @-moz-document url(chrome://browser/content/browser.xul),
-                         url(chrome://browser/content/browser.xhtml)
-          {
-            @import url("${localDir}/${cfg.profileName}.default/chrome/userChrome.colors.css");
-            @import url("${hey.configDir}/librewolf/userChrome.css");
-          }
-
+          @import "userChrome.colors.css";
           ${optionalString (cfg.userChrome != "") cfg.userChrome}
         '';
 
