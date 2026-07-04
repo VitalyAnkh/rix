@@ -149,16 +149,17 @@ if PRIMARY_MONITOR then
           persistent = i == 1
       })
     end
+    -- A workspace exclusively for games
+    hl.workspace_rule({
+        workspace = 10,
+        layout = "monocle",
+        monitor = PRIMARY_MONITOR,
+        no_border = true,
+        no_shadow = true,
+        gaps_in = 0,
+        gaps_out = 0
+    })
 end
--- A workspace exclusively for games
-hl.workspace_rule({
-    workspace = 10,
-    layout = "monocle",
-    no_border = true,
-    no_shadow = true,
-    gaps_in = 0,
-    gaps_out = 0
-})
 
 hl.workspace_rule({
     workspace = "special:term",
