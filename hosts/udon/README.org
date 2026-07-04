@@ -6,19 +6,19 @@ My daily NixOS driver, for work and play. Dual-boots with Windows (used solely
 for gaming, when Proton isn't enough).
 
 * Specs
-| CASE | [[https://www.amazon.com/Fractal-Design-Define-Cases-FD-CA-DEF-R4-BL/dp/B008HD3CTI][Fractal Design Define R4 ATX Tower Case Black Pearl]] |
-| CPU  | [[https://www.newegg.ca/amd-ryzen-9-3900x/p/N82E16819113103][AMD Ryzen 9 3900X 12-core, 24-thread]]                |
-| MOBO | [[https://www.newegg.ca/gigabyte-b550-aorus-elite/p/N82E16813145214?Item=N82E16813145214&IsFeedbackTab=true#scrollFullInfo][GIGABYTE B550 AORUS Elite]]                           |
-| COOL | [[https://www.newegg.ca/cooler-master-hyper-212-evo-rr-212e-20pk-r2/p/N82E16835103099][Cooler Master Hyper 212 Evo]]                         |
-| RAM  | [[https://www.newegg.ca/g-skill-64gb-288-pin-ddr4-sdram/p/N82E16820374003?Description=G.SKILL%20Ripjaws%20V%20Series%2064gb&cm_re=G.SKILL_Ripjaws%20V%20Series%2064gb-_-20-374-003-_-Product][G.SKILL Ripjaws V Series 64GB (2x 32GB)]]             |
-| PSU  | [[https://www.newegg.ca/seasonic-prime-ultra-titanium-ssr-1000tr-1000w/p/N82E16817151195][Seasonic PRIME TX-1000]]                              |
+| CASE | Fractal Design Define R4 ATX Tower Case Black Pearl |
+| CPU  | AMD Ryzen 9 3900X 12-core, 24-thread                |
+| MOBO | GIGABYTE B550 AORUS Elite                           |
+| COOL | Cooler Master Hyper 212 Evo                         |
+| RAM  | G.SKILL Ripjaws V Series 64GB (2x 32GB)             |
+| PSU  | Seasonic PRIME TX-1000                              |
 | GPU  | ASUS TUF GeForce 3080ti RTX                         |
-| HDD  | [[https://www.amazon.ca/gp/product/B0B7CPSN2K?psc=1][WD_BLACK 1TB SN850X NVMe]]                            |
-| HDD  | [[https://www.newegg.ca/samsung-970-evo-plus-500gb/p/N82E16820147742?Description=samsung%20970%20evo%20plus&cm_re=samsung_970%20evo%20plus-_-20-147-742-_-Product][Samsung 970 EVO+ 500GB]]                              |
+| HDD  | WD_BLACK 1TB SN850X NVMe                            |
+| HDD  | Samsung 970 EVO+ 500GB                              |
 | HDD  | Seagate ST1000DM010 Compute 1TB                     |
 | HDD  | WD6400AAKS 640GB                                    |
-| KBD  | [[https://ergodox-ez.com/][ErgoDox-EZ]]                                          |
-| USB  | [[https://www.anker.com/products/variant/anker-24g-wireless-vertical-ergonomic-optical-mouse/A7852011][Anker Wireless Vertical Mouse]]                       |
+| KBD  | ErgoDox-EZ                                          |
+| USB  | Anker Wireless Vertical Mouse                       |
 
 * Filesystems
 ** /dev/nvme0n1: Samsung EVO+ 500gb (nixos, /home)

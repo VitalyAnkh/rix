@@ -16,7 +16,7 @@ everything else), and shares a HDD between them.
 | HDD   | Samsung 970 EVO Plus 1TB NVMe M2        |
 | HDD   | WDC WD10 1TB platter drive              |
 | HDD   | Intel 80GB SSD                          |
-| KBD   | [[https://ergodox-ez.com/][ErgoDox-EZ]] (shared from Udon)           |
+| KBD   | ErgoDox-EZ (shared from Udon)           |
 | MOUSE | Razer Mamba White Edition               |
 
 * Filesystems
