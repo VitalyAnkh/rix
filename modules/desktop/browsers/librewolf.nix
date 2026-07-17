@@ -27,12 +27,6 @@ in {
 
   config = mkIf cfg.enable {
     user.packages = with pkgs; [
-      # Obey XDG, damn it!
-      (writeShellScriptBin "librewolf" ''
-        export HOME="$XDG_FAKE_HOME"
-        exec "${config.programs.firefox.package}/bin/librewolf" "$@"
-      '')
-
       gabutdm
     ];
 
@@ -207,11 +201,11 @@ in {
       };
     };
 
-    home =
-      let localDir = "${config.home.fakeDir}/.librewolf";
+    home.configFile =
+      let localDir = "librewolf/librewolf";
       in {
         # Use fixed profile name so it can be targeted in themes and scripts
-        file."${localDir}/profiles.ini".text = ''
+        "${localDir}/profiles.ini".text = ''
           [Profile0]
           Name=default
           IsRelative=1
@@ -223,7 +217,7 @@ in {
           Version=2
         '';
 
-        file."${localDir}/${cfg.profileName}.default/user.js" =
+        "${localDir}/${cfg.profileName}.default/user.js" =
           mkIf (cfg.settings != {} || cfg.extraConfig != "") {
             text = ''
               ${concatStrings (mapAttrsToList (name: value: ''
@@ -233,12 +227,12 @@ in {
             '';
           };
 
-        file."${localDir}/${cfg.profileName}.default/chrome/userChrome.css".text = ''
+        "${localDir}/${cfg.profileName}.default/chrome/userChrome.css".text = ''
           @import "userChrome.colors.css";
           ${optionalString (cfg.userChrome != "") cfg.userChrome}
         '';
 
-        file."${localDir}/${cfg.profileName}.default/chrome/userContent.css" =
+        "${localDir}/${cfg.profileName}.default/chrome/userContent.css" =
           mkIf (cfg.userContent != "") { text = cfg.userContent; };
       };
   };
