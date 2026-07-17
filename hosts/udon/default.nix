@@ -45,14 +45,14 @@ with builtins;
         extraConfig = ''
           -- Bind fixed workspaces to external monitors
           hl.workspace_rule({
-            workspace = "name:left",
+            workspace = "name:right",
             monitor = "DP-3",
             default = true,
             persistent = true,
             layout = "scrolling"
           })
           hl.workspace_rule({
-            workspace = "name:right",
+            workspace = "name:left",
             monitor = "DP-2",
             default = true,
             persistent = true,
