@@ -65,7 +65,7 @@ in {
       # :lang cc
       clang-tools
       # :lang latex & :lang org (latex previews)
-      texlive.combined.scheme-medium
+      texliveMedium
       # :lang nix
       age
       # :lang python
