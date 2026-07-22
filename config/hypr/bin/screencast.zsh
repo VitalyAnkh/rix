@@ -29,15 +29,31 @@ main() {
   case "${1:-webm}" in
     webm)
       file="$prefix.webm"
-      opts+=( --audio -c libvpx -C libvorbis -p crf=20 -p speed=1 -p lag-in-frames=15 -p cpu-used 0 )
+      # Optimized for short (sub-30s) recordings of text/code. Use mp4 for
+      # gaming-quality recordings.
+      opts+=( \
+        -c libvpx-vp9 -x yuv444p -r 30 \
+        -p crf=24 -p cpu-used=0 -p deadline=good \
+        -p row-mt=1 -p tile-columns=2 -p b=0 -p g=240 \
+      )
       ;;
     mp4)
       file="$prefix.mp4"
-      opts+=( --audio -c libx264 -p preset=slow -p crf=21 )
-      wf-recorder -g "$1" --audio --file="$file" &
+      # Optimized for high-motion (sub-30s) recordings of high-motion content,
+      # like games or video.
+      opts+=( \
+        --audio -c libx264 -r 60 -B 60 -b 5 \
+        -p preset=slow -p tune=animation -p crf=18 \
+        -p g=300 -p keyint_min=60 -p aq-mode=3 \
+        -p profile=high -p level=4.2 \
+      )
       ;;
     gif)
       file="$prefix.gif"
+      # Not optimized at all. There really is little reason to use gif over
+      # webm, but I keep it here for posterity. Ideally, it should be encoded to
+      # some other raw format and post-processed to gif with ffmpeg, but I can't
+      # be assed to do that here, since I never use this.
       opts+=( --codec gif )
       ;;
     *) hey.abort "Unknown format: $1" ;;
