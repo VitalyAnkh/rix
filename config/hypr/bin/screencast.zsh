@@ -81,6 +81,7 @@ main() {
       hey.do -! gifsicle --optimize=3 "$file"
     fi
     echo "file://$file" | wl-copy -t text/uri-list
+    hey .play-sound success &
     dms ipc toast info "Recording complete. Copied to clipboard!"
   fi
 }
