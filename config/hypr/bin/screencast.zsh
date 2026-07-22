@@ -2,7 +2,7 @@
 # Record a region of the screen to clipboard.
 #
 # SYNOPSIS:
-#   screencast [webm|mp4|gif] [X,Y WxH]
+#   screencast [webm|mp4|gif] [X,Y WxH] [DELAY]
 #
 # DESCRIPTION:
 #   Prompts the user to select a region, window, or monitor to begin recording
@@ -48,13 +48,16 @@ main() {
   local geom="$(hey .slurp ${2:-region})"
   [[ -z "$geom" ]] && exit 1
 
-  for i in {3..1}; do
-    hey .play-sound blip &
-    dms ipc toast dismiss countdown  # debounce
-    dms ipc toast warnWith "Recording starting in... $i" "" "" countdown
-    sleep 1
-  done
-  dms ipc toast dismiss countdown
+  local delay="$3"
+  if [[ -n "$delay" ]] && (( delay > 0 )); then
+    for i in {$delay..1}; do
+      hey .play-sound blip &
+      dms ipc toast dismiss countdown  # debounce
+      dms ipc toast warnWith "Recording starting in... $i" "" "" countdown
+      sleep 1
+    done
+    dms ipc toast dismiss countdown
+  fi
   if wf-recorder -g "$geom" ${opts[@]} --file="$file"; then
     sleep 0.1
     if [[ $1 == gif ]]; then
