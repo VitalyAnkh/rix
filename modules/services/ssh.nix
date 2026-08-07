@@ -17,13 +17,12 @@ in {
           # Require keys over passwords. Ensure target machines are provisioned
           # with authorizedKeys!
           PasswordAuthentication = false;
+          # Deactivate short moduli
+          ModuliFile = toString (pkgs.runCommandLocal "filterModuliFile" {} ''
+            awk '$5 >= 3071' "${config.services.openssh.package}/etc/ssh/moduli" > "$out"
+            [ -s $out ] || { echo "moduli filter left nothing behind"; exit 1; }
+          '');
         };
-        # Suppress superfluous TCP traffic on new connections. Undo if using SSSD.
-        extraConfig = ''GSSAPIAuthentication no'';
-        # Deactivate short moduli
-        moduliFile = pkgs.runCommand "filterModuliFile" {} ''
-          awk '$5 >= 3071' "${config.programs.ssh.package}/etc/ssh/moduli" >"$out"
-        '';
         # Removes the default RSA key (not that it represents a vulnerability, per
         # se, but is one less key (that I don't plan to use) to the castle laying
         # around) and improves the ed25519 key's entropy by generating it with 100
