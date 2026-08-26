@@ -44,12 +44,18 @@ in {
 
     user.extraGroups = [ "input" ];   # For DMS Screenkey plugin
 
+    ## So DMS+Matugen can theme QT apps
+    qt = {
+      enable = true;
+      platformTheme = "qt5ct";
+    };
+
     environment.sessionVariables = {
       ELECTRON_OZONE_PLATFORM_HINT = "auto";
       NIXOS_OZONE_WL = "1";
       MOZ_ENABLE_WAYLAND = "1";
-      QT_QPA_PLATFORMTHEME = "gtk3";
-      QT_QPA_PLATFORMTHEME_QT6 = "gtk3";
+      QT_QPA_PLATFORMTHEME = "qt5ct";
+      QT_QPA_PLATFORMTHEME_QT6 = "qt6ct";
     };
 
     programs.hyprland = {
@@ -90,6 +96,12 @@ in {
 
     home.configFile = {
       "matugen/templates".source = "${hey.configDir}/matugen/templates";
+
+      # If DMS is launched vya systemd, it won't see the profile envvars, so...
+      "environment.d/90-dms.conf".text = ''
+        QT_QPA_PLATFORMTHEME = "qt5ct";
+        QT_QPA_PLATFORMTHEME_QT6 = "qt6ct";
+      '';
 
       "matugen/config.toml".text = ''
         [config]
