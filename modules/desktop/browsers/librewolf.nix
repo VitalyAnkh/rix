@@ -28,6 +28,12 @@ in {
   config = mkIf cfg.enable {
     user.packages = with pkgs; [
       gabutdm
+      (mkLauncherEntry "Librewolf (Alt)" {
+        description = "Open the alt Librewolf profile";
+        icon = "librewolf";
+        exec = "librewolf -P alt";
+        categories = [ "Network" ];
+      })
     ];
 
     # Treat LibreWolf as our default PDF reader
@@ -203,22 +209,7 @@ in {
 
     home.configFile =
       let localDir = "librewolf/librewolf";
-      in {
-        # Use fixed profile name so it can be targeted in themes and scripts
-        "${localDir}/profiles.ini".text = ''
-          [Profile0]
-          Name=default
-          IsRelative=1
-          Path=${cfg.profileName}.default
-          Default=1
-
-          [General]
-          StartWithLastProfile=1
-          Version=2
-        '';
-
-        "${localDir}/${cfg.profileName}.default/user.js" =
-          mkIf (cfg.settings != {} || cfg.extraConfig != "") {
+          userjs = mkIf (cfg.settings != {} || cfg.extraConfig != "") {
             text = ''
               ${concatStrings (mapAttrsToList (name: value: ''
                 user_pref("${name}", ${builtins.toJSON value});
@@ -226,14 +217,37 @@ in {
               ${cfg.extraConfig}
             '';
           };
-
-        "${localDir}/${cfg.profileName}.default/chrome/userChrome.css".text = ''
-          @import "userChrome.colors.css";
+          userChrome = ''
+            @import "userChrome.colors.css";
           ${optionalString (cfg.userChrome != "") cfg.userChrome}
+          '';
+          userContent = mkIf (cfg.userContent != "") { text = cfg.userContent; };
+      in {
+        # Use fixed profile names so it can be targeted in themes and scripts
+        "${localDir}/profiles.ini".text = ''
+          [General]
+          StartWithLastProfile=1
+          Version=2
+
+          [Profile0]
+          Name=default
+          IsRelative=1
+          Path=${cfg.profileName}.default
+          Default=1
+
+          [Profile1]
+          Name=alt
+          IsRelative=1
+          Path=${cfg.profileName}.alt
         '';
 
-        "${localDir}/${cfg.profileName}.default/chrome/userContent.css" =
-          mkIf (cfg.userContent != "") { text = cfg.userContent; };
+        "${localDir}/${cfg.profileName}.default/user.js" = userjs;
+        "${localDir}/${cfg.profileName}.default/chrome/userChrome.css".text = userChrome;
+        "${localDir}/${cfg.profileName}.default/chrome/userContent.css" = userContent;
+
+        "${localDir}/${cfg.profileName}.alt/user.js" = userjs;
+        "${localDir}/${cfg.profileName}.alt/chrome/userChrome.css".text = userChrome;
+        "${localDir}/${cfg.profileName}.alt/chrome/userContent.css" = userContent;
       };
   };
 }
