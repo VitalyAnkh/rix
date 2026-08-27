@@ -66,8 +66,8 @@ in {
 
     programs.dms-shell = {
       enable = true;
-      package = hey.inputs.dms.packages."${pkgs.stdenv.hostPlatform.system}".default;
-      quickshell.package = hey.inputs.quickshell.packages."${pkgs.stdenv.hostPlatform.system}".default;
+      # package = hey.inputs.dms.packages."${pkgs.stdenv.hostPlatform.system}".default;
+      # quickshell.package = hey.inputs.quickshell.packages."${pkgs.stdenv.hostPlatform.system}".default;
       systemd.enable = true;
       enableSystemMonitoring = true;
       enableDynamicTheming = true;

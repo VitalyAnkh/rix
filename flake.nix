@@ -18,10 +18,6 @@
       home-manager.inputs.nixpkgs.follows = "nixpkgs";
       agenix.url = "github:ryantm/agenix";
       agenix.inputs.nixpkgs.follows = "nixpkgs";
-      quickshell.url = "github:quickshell-mirror/quickshell";
-      quickshell.inputs.nixpkgs.follows = "nixpkgs";
-      dms.url = "github:AvengeMedia/DankMaterialShell";
-      dms.inputs.nixpkgs.follows = "nixpkgs";
 
       # Extras (imported directly by modules/hosts that need them)
       emacs-overlay.url = "github:nix-community/emacs-overlay";
