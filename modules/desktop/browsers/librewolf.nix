@@ -28,6 +28,12 @@ in {
   config = mkIf cfg.enable {
     user.packages = with pkgs; [
       gabutdm
+      (mkLauncherEntry "Librewolf (Private)" {
+        description = "Open a private Librewolf window";
+        icon = "librewolf";
+        exec = "librewolf --private-window";
+        categories = [ "Network" ];
+      })
       (mkLauncherEntry "Librewolf (Alt)" {
         description = "Open the alt Librewolf profile";
         icon = "librewolf";
