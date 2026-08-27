@@ -45,8 +45,8 @@ in {
       bc
       dust     # a better du
       eza      # a better ls
-      fasd
-      fd
+      zoxide   # a better (and maintained) fasd
+      fd       # a better find
       fzf
       gnumake
       libqalculate  # calculator cli w/ currency conversion
@@ -63,8 +63,6 @@ in {
     environment.variables = {
       ZDOTDIR = "$XDG_CONFIG_HOME/zsh";
       ZGEN_DIR = "$XDG_DATA_HOME/zgenom";
-      _FASD_DATA = "$XDG_CACHE_HOME/fasd";
-      _FASD_VIMINFO = "$XDG_CACHE_HOME/viminfo";
     };
 
     # Ensure that ZSH's cache directory exists, lest we have IO errors early on.

@@ -31,9 +31,32 @@ if (( $+commands[fzf] )); then
 fi
 
 # Omni-Completion
-if (( $+commands[fasd] )); then
-  bindkey -M viins '^x^f' fasd-complete-f  # C-x C-f to do fasd-complete-f (only files)
-  bindkey -M viins '^x^d' fasd-complete-d  # C-x C-d to do fasd-complete-d (only directories)
+if (( $+commands[zoxide] )); then
+  # C-x C-d: pick a directory from zoxide db
+  zoxide-complete-d() {
+    local query dir
+    query=${LBUFFER##* }
+    dir=$(zoxide query --interactive -- "$query") || { zle redisplay; return 0 }
+    LBUFFER=${LBUFFER%"$query"}${(q-)dir}
+    zle reset-prompt
+  }
+  zle -N zoxide-complete-d
+
+  # C-x C-f: pick a directory from zoxide db, then a file inside it
+  zoxide-complete-f() {
+    local query dir file full
+    query=${LBUFFER##* }
+    dir=$(zoxide query --interactive -- "$query") || { zle redisplay; return 0 }
+    file=$(cd -- "$dir" && fd --type f --hidden --exclude .git |
+               fzf --height 40% --reverse --prompt='file> ') || { zle redisplay; return 0 }
+    full=$dir/$file
+    LBUFFER=${LBUFFER%"$query"}${(q-)full}
+    zle reset-prompt
+  }
+  zle -N zoxide-complete-f
+
+  bindkey -M viins '^x^d' zoxide-complete-d
+  bindkey -M viins '^x^f' zoxide-complete-f
 fi
 
 # Completing words in buffer in tmux

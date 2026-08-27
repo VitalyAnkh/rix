@@ -70,19 +70,6 @@ if (( $+commands[eza] )); then
   alias tree='eza --tree'
 fi
 
-if (( $+commands[fasd] && $+commands[fzf] )); then
-  # fuzzy completion with 'z' when called without args
-  (( $+aliases[z] )) && unalias z
-  function z {
-    if (( $# > 0 )); then
-      fasd_cd -d $@
-    else
-      local dir=$(fasd_cd -d -l 2>&1 | fzf --height 40% --nth 2.. --reverse --inline-info +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')
-      [[ -n $dir ]] && cd $dir
-    fi
-  }
-fi
-
 if (( $+commands[udisksctl] )); then
   alias ud='udisksctl'
   alias udm='udisksctl mount -b'
