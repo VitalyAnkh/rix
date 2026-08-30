@@ -140,7 +140,10 @@ with builtins;
       google-chrome  # for sites that hate firefox
     ];
 
-    networking.firewall.allowedTCPPorts = [ 4333 ];
+    programs.kdeconnect = {
+      enable = true;
+      package = pkgs.kdePackages.kdeconnect-kde;
+    };
   };
 
   hardware = { ... }: {
