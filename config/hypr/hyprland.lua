@@ -154,10 +154,20 @@ if PRIMARY_MONITOR then
         workspace = 10,
         layout = "monocle",
         monitor = PRIMARY_MONITOR,
+        gaps_in = 0,
+        gaps_out = 0,
         no_border = true,
         no_shadow = true,
-        gaps_in = 0,
-        gaps_out = 0
+        no_rounding = true
+    })
+
+    hl.window_rule({
+        name  = "games-workspace",
+        match = { workspace = "10" },
+        no_blur      = true,
+        no_anim      = true,
+        immediate    = true,
+        idle_inhibit = "fullscreen"
     })
 end
 
@@ -193,41 +203,45 @@ hl.window_rule({   -- see coniig/hypr/bin/screendraw.zsh
     no_shadow = true
 })
 
+
+-- ** Steam
+
 hl.window_rule({
-    name = "steam-rule",
-    match = { class = "^steam$" },
-    suppress_event = "fullscreen maximize",
-    float = true,
+    name = "steam-all-windows",
+    match = { class = "steam" },
+    immediate = true,
     no_blur = true,
-    no_max_size = true,
     no_anim = true,
-    no_shadow = true
-})
-hl.window_rule({
-    name = "steam-windows-rule",
-    match = { class = "^steam" },
-    suppress_event = "fullscreen maximize",
-    float = true,
-    no_anim = true,
-    no_dim = true,
-    no_blur = true,
     no_shadow = true,
     no_max_size = true,
-    immediate = true,
     min_size = {1, 1}
 })
+
 hl.window_rule({
-    name = "steam-games-rule",
-    match = { class = "^steam_app_\\d+$" },
+    name = "steam-main-window",
+    match = { class = "steam", initial_title = "Steam" },
     suppress_event = "fullscreen maximize",
-    content = "game",
-    border_size = 0,
-    fullscreen = true,
+    float = false,
+    fullscreen = false
+})
+hl.window_rule({
+    name = "steam-popups",
+    match = { class = "steam", initial_title = "negative:Steam" },
+    suppress_event = "fullscreen maximize",
+    float = true,
+    center = true
+})
+hl.window_rule({
+    name = "steam-games",
+    match = { initial_class = "(gamescope|steam_app_\\d+)" },
     workspace = "10 silent",
-    rounding = false,
+    suppress_event = "maximize",
+    content = "game",
+    fullscreen = true,
     float = false,
     tile = false
 })
+
 hl.window_rule({
     match = { fullscreen = true },
     idle_inhibit = "fullscreen"

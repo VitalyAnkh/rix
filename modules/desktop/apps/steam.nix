@@ -13,12 +13,21 @@ in {
   };
 
   config = mkIf cfg.enable {
+    # Moves Windows thread-sync primitives into the kernel, cutting wineserver
+    # overhead, improving 1% lows in CPU-heavy games/apps. Needs kernel 6.14+
+    # and a Proton that uses it: GE-Proton enables it automatically when the
+    # module is present; upstream Proton may still want PROTON_USE_NTSYNC=1 in
+    # the game's launch options depending on version.
+    boot.kernelModules = [ "ntsync" ];
+
     programs = {
       steam = {
         enable = true;
         remotePlay.openFirewall = true;
-        gamescopeSession.enable = true;
+        # gamescopeSession.enable = true;
+        extraPackages = [ pkgs.gamescope ];
       };
+
       # Makes gamemoderun available, but it must be selectively enabled for
       # games by changing said game's launch options to 'gamemoderun %command%'.
       gamemode = {
@@ -33,6 +42,17 @@ in {
             end = "${heyBin} hook onGamemode off";
           };
         };
+      };
+
+      # E.g. 'gamemoderun gamescope -f -W 2560 -H 1440 -r 144 -- %command%'
+      # Helpful options:
+      #   --adaptive-sync
+      #   --force-grab-cursor
+      #   --mangoapp
+      #   --expose-wayland
+      gamescope = {
+        enable = true;
+        capSysNice = false;
       };
     };
 

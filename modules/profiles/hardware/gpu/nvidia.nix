@@ -95,6 +95,7 @@ in mkIf (any (s: hasPrefix "gpu/nvidia" s) hardware) (mkMerge [
       LIBVA_DRIVER_NAME = "nvidia";
       WLR_NO_HARDWARE_CURSORS = "1";
 
+      NVD_BACKEND = "direct";
       # May cause Firefox crashes
       GBM_BACKEND = "nvidia-drm";
 

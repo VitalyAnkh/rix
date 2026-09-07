@@ -32,6 +32,7 @@ with builtins;
           { output = "HDMI-A-2";
             mode = "2560x1440@120";
             position = "1920x2160";
+            vrr = 2;
             primary = true; }
           { output = "DP-2";
             position = "0x2191"; }
@@ -40,6 +41,7 @@ with builtins;
           { output = "HDMI-A-1";
             mode = "3840x2160@120";
             position = "1280x0";
+            vrr = 2;
             disabled = true; }
         ];
         extraConfig = ''

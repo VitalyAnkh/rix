@@ -20,6 +20,7 @@ in {
         scale = mkOpt int 1;
         disabled = mkOpt bool false;
         primary = mkOpt bool false;
+        vrr = mkOpt int 0;
       };
     })) [{}];
   };
@@ -150,7 +151,8 @@ in {
               mode = "${v.mode}",
               position = "${v.position}",
               scale = ${toString (v.scale or 1)},
-              disabled = ${if v.disabled then "true" else "false"}
+              disabled = ${if v.disabled then "true" else "false"},
+              vrr = ${toString (v.vrr or 0)}
             })
           '') cfg.monitors)}
 
