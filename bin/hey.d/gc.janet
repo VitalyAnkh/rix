@@ -10,7 +10,9 @@
 #   -s
 #     Only GC the system profile.
 #   -d
-#     Delete old profiles as well.
+#     Delete profile and profile data older than 14d
+#   -D
+#     Delete *all* profiles.
 
 (use hey)
 (use hey/cmd)

@@ -186,13 +186,13 @@ hl.workspace_rule({
 
 -- * Window rules
 
-hl.window_rule({   -- see coniig/hypr/bin/screenshot.zsh
+hl.window_rule({   -- see config/hypr/bin/screenshot.zsh
     name = "swappy",
     match = { class = "swappy" },
     dim_around = true
 })
 
-hl.window_rule({   -- see coniig/hypr/bin/screendraw.zsh
+hl.window_rule({   -- see config/hypr/bin/screendraw.zsh
     name = "gromit-mpx-rule",
     match = { class = "^(Gromit-mpx)$" },
     suppress_event = "fullscreen maximize",

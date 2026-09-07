@@ -2,7 +2,9 @@
 #
 # I make games on my spare time (and occasionally edit audio for videos). These
 # need music and sound effects. In the past, I've used Apple Logic, Fruityloops,
-# and Adobe Audition. To replace them on Linux, I use Reaper.
+# and Adobe Audition. To replace them on Linux, I use Reaper because it's the
+# Blender of DAWs (scriptable, versatile, Linux-friendly, and no subscription
+# pricing) and audacity for quick edits. I sometimes dip into Renoise too.
 
 { hey, lib, config, pkgs, ... }:
 
@@ -34,9 +36,8 @@ in {
     services.pipewire.jack.enable = true;
 
     user.packages = with pkgs; [
-      reaper        # My DAW for making/recording music
+      reaper        # My DAW of choice
       audacity      # For one-off audio editing
-      # sunvox      # For chiptune
     ];
   };
 }
