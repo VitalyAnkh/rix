@@ -33,7 +33,20 @@ mkIf (config.modules.profiles.role == "server") {
   power.ups.mode = mkDefault "netclient";
 
   ## Security tweaks
-  boot.kernelPackages = mkForce pkgs.linuxKernel.packages.linux_6_12_hardened;
+  boot = {
+    kernelPackages = mkForce pkgs.linuxKernel.packages.linux_6_12_hardened;
+    kernel.sysctl = {
+      # The Magic SysRq key is a key combo that allows users connected to the
+      # system console of a Linux kernel to perform some low-level commands.
+      # Disable it, since we don't need it, and is a potential security concern.
+      "kernel.sysrq" = 0;
+
+      # Reverse path filtering causes the kernel to do source validation of
+      # packets received from all interfaces. This can mitigate IP spoofing.
+      "net.ipv4.conf.default.rp_filter" = 1;
+      "net.ipv4.conf.all.rp_filter" = 1;
+    };
+  };
   # Prevent replacing the running kernel w/o reboot
   security.protectKernelImage = true;
 }
