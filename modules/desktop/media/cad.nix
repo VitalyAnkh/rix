@@ -7,33 +7,22 @@
 with lib;
 with hey.lib;
 let cfg = config.modules.desktop.media.cad;
-    version = "5.0";
+    version = "5.2";
 in {
   options.modules.desktop.media.cad = with types; {
     enable = mkBoolOpt false;
   };
 
   config = mkIf cfg.enable {
-    # Supplies newer versions of Blender with CUDA support baked in.
-    # @see https://github.com/edolstra/nix-warez/tree/master/blender
-    # nixpkgs.overlays = [ hey.inputs.blender-bin.overlays.default ];
-
     user.packages = with pkgs; [
       blender
-
-      # Blender itself doesn't need libxcrypt-legacy, but I use blenderkit,
-      # which needs libcrypt.so.1, which libxcrypt no longer provides.
-      # (mkWrapper blender ''
-      #   wrapProgram "$out/bin/blender" \
-      #     --run 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${pkgs.libxcrypt-legacy}/lib"'
-      # '')
     ];
 
     home.configFile = {
-      # "blender/${version}/config" = {
-      #   source = "${hey.configDir}/blender/config";
-      #   recursive = true;
-      # };
+      "blender/${version}/config" = {
+        source = "${hey.configDir}/blender/config";
+        recursive = true;
+      };
       # "blender/${version}/scripts" = {
       #   source = "${hey.configDir}/blender/scripts";
       #   recursive = true;
