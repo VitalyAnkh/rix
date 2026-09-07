@@ -121,7 +121,7 @@ in {
         ${optionalString config.modules.desktop.browsers.librewolf.enable ''
           [templates.librewolf]
           input_path = "${hey.configDir}/matugen/templates/librewolf.css"
-          output_path = "${config.home.fakeDir}/.librewolf/hlissner.default/chrome/userChrome.colors.css"
+          output_path = "${config.home.configDir}/librewolf/librewolf/hlissner.default/chrome/userChrome.colors.css"
         ''}
         ${optionalString config.modules.desktop.apps.rofi.enable ''
           [templates.rofi]
