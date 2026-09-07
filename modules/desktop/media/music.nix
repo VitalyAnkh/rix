@@ -15,7 +15,7 @@ in {
       playerctl      # to control feishen
       yt-dlp
       picard         # for editing tags
-      r128gain
+      rsgain
       shntool
       cuetools
       flac
