@@ -16,6 +16,6 @@
 
 (defcmd reload [_]
   (echof :g "Reloading %s..." (os/getenv "XDG_CURRENT_DESKTOP"))
-  (when (hey! hook reload -f -v)
+  (when (hey! hook onReload -f -v)
     (sys/notify "Finished reloading system" :icon 'checkmark :sound 'notify))
   (echo :check "Done!"))
