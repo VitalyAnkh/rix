@@ -203,6 +203,17 @@ hl.window_rule({   -- see config/hypr/bin/screendraw.zsh
     no_shadow = true
 })
 
+-- In multi-monitor setups where some displays are smaller than others, file
+-- dialogs can "remember" their last size in larger monitors and be maximized
+-- beyond the current monitor's boundaries, so...
+hl.window_rule({
+    name = "dialog-windows",
+    match = { float = true, class = "^(xdg-desktop-portal-gtk|librewolf)" },
+    suppress_event = "fullscreen maximize",
+    center = true,
+    max_size = { "monitor_w*0.9", "monitor_h*0.9" }
+})
+
 
 -- ** Steam
 
