@@ -8,7 +8,6 @@ let cfg = config.modules.desktop.apps.steam;
 in {
   options.modules.desktop.apps.steam = with types; {
     enable = mkBoolOpt false;
-    mangohud.enable = mkBoolOpt true;
     libraryDir = mkOpt str "";
   };
 
@@ -25,7 +24,7 @@ in {
         enable = true;
         remotePlay.openFirewall = true;
         # gamescopeSession.enable = true;
-        extraPackages = [ pkgs.gamescope ];
+        extraPackages = with pkgs; [ gamescope mangohud ];
       };
 
       # Makes gamemoderun available, but it must be selectively enabled for
@@ -96,7 +95,7 @@ in {
            --run '${libFix}/bin/libfix'
          wrapProgram "$out/bin/steam-run" --run 'export HOME="$XDG_FAKE_HOME"'
        '')
-    ] ++ (if cfg.mangohud.enable then [ pkgs.mangohud ] else []);
+    ];
 
     # Better for steam proton games
     systemd.user.settings.Manager.DefaultLimitNOFILE = mkDefault 1048576;
