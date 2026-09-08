@@ -54,6 +54,9 @@ in {
         DisableAppUpdate = true;
       };
       preferences = {
+        # The xdg-desktop-portal doesn't propagate the correct clipboard to
+        # file/save dialg windows, so disable it and use the native file picker.
+        "widget.use-xdg-desktop-portal.file-picker" = 0;
         # Allow svgs to take on theme colors
         "svg.context-properties.content.enabled" = true;
         # Pressing TAB from address bar shouldn't cycle through buttons before
