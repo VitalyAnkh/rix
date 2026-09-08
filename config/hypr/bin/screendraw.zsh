@@ -39,14 +39,17 @@ cat >$cfgfile <<EOF
   "blue Pen" = "red Pen" (color="blue");
   "yellow Pen" = "red Pen" (color="yellow");
   "green Marker" = PEN (size=6 color="green" arrowsize=1);
-
+  "ortho line" = ORTHOGONAL (color="red" size=5 simplify=15 radius=20 minlen=50 snap=40);
   "Eraser" = ERASER (size = 75);
 
-  "default" = "red Pen";
-  "default"[SHIFT] = "blue Pen";
-  "default"[CONTROL] = "yellow Pen";
-  "default"[2] = "green Marker";
-  "default"[Button3] = "Eraser";
+  "default" = SMOOTH (color="red" simplify=12 snap=30);
+  "default"[SHIFT] = "ortho line";
+  "default"[CONTROL] = "ortho line" (arrowsize=2);
+  "default"[2] = RECT (color="yellow");
+  "default"[SHIFT,2] = RECT (color="blue");
+  "default"[CONTROL,2] = RECT (color="green");
+  "default"[3] = "Eraser";
+  "default"[SHIFT,3] = ERASER (size=5000);
 EOF
 trap "rm -f '$cfgfile' '$inifile'" EXIT
 
