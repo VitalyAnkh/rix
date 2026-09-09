@@ -93,10 +93,7 @@ if [[ $TERM != dumb ]]; then
   source $ZGEN_DIR/zgenom.zsh
   if ! zgenom saved; then
     echo "Initializing zgenom"
-    rm -frv $ZDOTDIR/*.zwc(N) \
-            $ZDOTDIR/.*.zwc(N) \
-            ${0:a:h}/*.zwc(N) \
-            ${0:a:h}/.*.zwc(N) \
+    rm -frv {$ZDOTDIR,${0:a:h}}/*.zwc(DN) \
             $XDG_CACHE_HOME/zsh \
             $ZGEN_INIT.zwc
 
@@ -115,8 +112,7 @@ if [[ $TERM != dumb ]]; then
 
     # Must be explicit because zgenom compile ignores nix-store symlinks
     zgenom compile \
-      ${0:a:h}/*.zsh(-.N) \
-      ${0:a:h}/.zsh*~*.zwc(-.N) \
+      {$ZDOTDIR,@{0:a:h}}/{*.zsh,.zsh*}~*.zwc(-.N) \
       ${0:a:h}/completions/_*~*.zwc(-.N) \
       $DOTFILES_HOME/lib/zsh/*~*.zwc(.N)
   fi
