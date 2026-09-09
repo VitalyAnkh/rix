@@ -56,15 +56,15 @@ dotfiles over there.
    
 6. Create a host config in `hosts/` (see [existing ones](hosts/) for examples).
 
-7. Run the installer:
+7. Run the installer as root (the installer's `nixos` user has passwordless
+   sudo):
    ```sh
-   # The options are optional, but these are their default values, if you omit them.
-   $ dotfiles/install.zsh \ 
+   # The options are optional, but these are their default values:
+   $ dotfiles/install.zsh \
          --root /mnt \
          --flake /mnt/etc/dotfiles \
-         --user "$USER" \
          --host "$HOST" \
-         --dest /mnt/home/$USER/.config/dotfiles
+         --user hlissner
    ```
 
 8. Then reboot and you're good to go!
