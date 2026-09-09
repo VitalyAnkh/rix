@@ -91,28 +91,30 @@ OPTIONS:
     Display the documentation embedded in a target script's header.
 
 COMMANDS:
-  - build|b    -- Build nix images or recompile bin/hey
-  - exec       -- Dispatch to $DOTFILES_HOME/{,hosts/$HOST,config/$WM}/bin/shim.d $PATH
+  - build|b    -- Build nix images, or recompile bin/hey.
+  - exec       -- Execute a program on $PATH through hey.
+  - gc         -- Garbage collect and optimize the nix store.
   - get|set    -- Alias for hey vars {get,set} ...
-  - gc         -- Run garbage collection on the user's/system's profile
-  - help|h     -- Display documentation for the command
-  - hook       -- Trigger scripts associated with an event
-  - host       -- Dispatch to $DOTFILES_HOME/hosts/$HOST/bin
-  - info       -- Display information about current system (JSON)
-  - path       -- Display path to area of my dotfiles
-  - profile    -- Manage or analyze a system or user nix profile
-  - pull       -- Update flake inputs
-  - reload     -- Run reload hooks
-  - repl       -- Open a Janet, Nix, or nix-develop REPL
-  - swap       -- Swap nix-store symlinks with copies (and back)
-  - sync|s     -- Rebuild this flake (using nixos-rebuild)
-  - test       -- Run Hey and/or Nix test suites
-  - which      -- Print out the script's path (with arguments) w/o executing it
-  - wm         -- Dispatch to $DOTFILES_HOME/config/$WM/bin
+  - help|h     -- Display documentation for a command.
+  - hook       -- Trigger an event.
+  - host       -- Dispatch to hosts/$HOST/bin.
+  - info       -- Display information about the current system (JSON).
+  - ops        -- Operate on remote HeyOS-powered hosts.
+  - path       -- Prints a path to a subarea of my dotfiles.
+  - profile|pr -- Operate on the nixos profile.
+  - pull       -- Update one of (or all) HeyOS's inputs.
+  - reload|re  -- Reload running services.
+  - repl       -- Open a nix or janet repl with this flake preloaded.
+  - swap|sw    -- Swap nix-store symlinks with mutable copies (and back)
+  - sync|s     -- Rebuild this flake (using nixos-rebuild).
+  - test       -- Run the Hey and/or Nix test suites.
+  - theme      -- Dispatch to the active theme's bin.
   - vars       -- Get or set session or persistent state in userspace.
-  - @*         -- Dispatch to $DOTFILES_HOME/config/${1#@}/bin
-  - .*         -- Tries to be smart. Looks for any executable under host, wm,
-                  then $DOTFILES_HOME/bin.
+  - which      -- Print a command's path (with arguments) without running it.
+  - wm         -- Dispatch to config/$WM/bin.
+  - .*         -- Execute the first script found under host, wm, or bin/.
+  - ./         -- Execute a script by path.
+  - @*         -- Dispatch to config/DIR/bin.
 ```
 
 ## Frequently asked questions
