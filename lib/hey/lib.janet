@@ -186,6 +186,10 @@
 (defn not-implemented [& args]
   (abort "Not implemented yet! %q" args))
 
+(def *script-exts*
+  ``Extensions hey recognizes on a dispatchable script, in order.``
+  [".janet" ".zsh" ".sh"])
+
 (defn path/no-ext
   "Remove any (or a specific) file extension from PATH."
   [path & exts]

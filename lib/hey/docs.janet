@@ -264,7 +264,7 @@
                             (slice entry 0 -3)
                             entry)
                           (and (= mode :file) (path/executable? file))
-                          (path/no-ext entry ".janet" ".zsh" ".sh"))]
+                          (path/no-ext entry ;*script-exts*))]
           (unless (or (string/has-prefix? "." name)
                       (string/has-prefix? "_" name)
                       (in seen name))

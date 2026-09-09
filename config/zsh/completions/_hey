@@ -143,15 +143,13 @@ __hey_hooks() {
     $_hey_root/hosts/$_hey_host/hooks
   )
   __hey_scan $dirs
-  # all/ holds fallthrough handlers, not a hook of its own
+  # all runs for every hook, taking --HOOK; it is not a hook of its own
   _hey_reply=( ${_hey_reply:#all:*} )
 
-  # Hooks in an all/ subdirectory are prefixed with -- and third parties can
-  # drop extra handlers in $XDG_DATA_HOME/hey/hooks.d/HOOK.d/.
-  found=( $^dirs/all/--*(N-.x:t) )
-  extra=( ${${found#--}%.(janet|zsh|sh)} )
+  # Third parties (like nixos modules) can drop extra handlers in
+  # $XDG_DATA_HOME/hey/hooks.d/HOOK.d/.
   found=( $_hey_datadir/hooks.d/*.d(N/:t) )
-  extra+=( ${found%.d} )
+  extra=( ${found%.d} )
   known=( ${(@)_hey_reply%%:*} )
   extra=( ${extra:|known} )
 

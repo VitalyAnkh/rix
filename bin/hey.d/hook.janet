@@ -37,7 +37,6 @@
 (import hey/vars)
 
 (def- *vars* (vars/new (:dir vars/temp :hook)))
-(def- *exts* [".janet" ".zsh" ".sh" ".d"])
 
 (defn- hooks [hook args]
   (let [wmdir (path :wm "hooks")
@@ -58,7 +57,7 @@
 
 (defn- all-hooks []
   (defn names-in [dir]
-    (map |(path/no-ext $ ;*exts*) (or (ignore-errors (os/dir dir)) [])))
+    (map |(path/no-ext $ ;*script-exts* ".d") (or (ignore-errors (os/dir dir)) [])))
   (let [names @{}]
     (each dir [(path :wm* "hooks")
                (path :host "hooks")

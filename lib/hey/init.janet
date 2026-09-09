@@ -72,7 +72,7 @@
             (if (= kind :directory)
               [target ;(slice args depth)]
               (do (each crumb (reverse crumbs)
-                    (when-let [file (path/sibling :file crumb ".janet" ".zsh" ".sh" "")]
+                    (when-let [file (path/sibling :file crumb ;*script-exts* "")]
                       (set target file)
                       (break))
                     (-- depth))
