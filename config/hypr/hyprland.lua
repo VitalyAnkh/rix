@@ -214,6 +214,10 @@ hl.window_rule({
     max_size = { "monitor_w*0.9", "monitor_h*0.9" }
 })
 
+hl.window_rule({ match={ class = "^librewolf$" }, scrolling_width = 0.8 })
+
+hl.window_rule({ match={ class = "^foot$" }, scrolling_width = 0.3 })
+
 
 -- ** Steam
 
