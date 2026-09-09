@@ -57,8 +57,6 @@
              [:sync :s]     (cmd 'sync)
              :test          (with-doc "Run the Hey and/or Nix test suites."
                               |[:exec "judge" (path :home "test/hey") ;(slice $& 1)])
-             :theme         (with-doc "Dispatch to the active theme's bin."
-                              |[:exec (path (keyword $0) "bin") ;$&])
              :vars          (cmd 'vars)
              :wm            (with-doc "Dispatch to config/$WM/bin."
                               |[:exec (path (keyword $0) "bin") ;$&])

@@ -8,7 +8,7 @@
 # What's left here is the dynamic half of hey's dispatcher, which has to walk
 # $DOTFILES_HOME:
 #
-#   hey wm|host|theme CMD  -- scripts in {config/$WM,hosts/$HOST,modules/themes/$THEME}/bin
+#   hey wm|host CMD        -- scripts in {config/$WM,hosts/$HOST}/bin
 #   hey @FOO CMD           -- scripts in config/FOO/bin
 #   hey .FOO               -- scripts in hosts/$HOST/bin, config/$WM/bin, or bin/
 #   hey hook HOOK          -- hooks in {$XDG_CONFIG_HOME/$WM,config/$WM,hosts/$HOST}/hooks
@@ -233,9 +233,6 @@ __hey_dispatch() {
     # These dispatch into a directory of scripts instead of taking arguments of
     # their own, so there is no header of their own to read.
     (host)  __hey_subdir $_hey_root/hosts/$_hey_host/bin ;;
-    # TODO: dead until lib/hey/lib.janet's *paths* grows a :theme area; `hey
-    # theme` aborts today, and no theme ships a bin/.
-    (theme) __hey_subdir $_hey_root/modules/themes/${THEME:-*}/bin(N-/) ;;
     (wm)    __hey_subdir $_hey_root/config/$_hey_wm/bin ;;
     (@*)    __hey_subdir $_hey_root/config/${words[1]#@}/bin ;;
     (.*)

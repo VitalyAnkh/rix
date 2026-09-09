@@ -40,7 +40,7 @@
 (deftest completion/command-reconstruction
   # __hey_scriptdir has to rebuild the command line for `hey help --dump`. The
   # sigil belongs to the first word whether the NAME.d walk consumes it or it is
-  # the leaf, and @DIR must keep its sigil while wm/host/theme do not.
+  # the leaf, and @DIR must keep its sigil while wm and host do not.
   (defn- dumped [& words]
     (find |(string/has-prefix? "DUMP " $) (complete "reconstruct" ;words)))
 

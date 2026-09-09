@@ -202,8 +202,8 @@
 
 (defn- dispatchable-scripts
   ``Every script hey can dispatch to: bin/ and its .d dirs, each host's and
-  config's bin/, and any theme's. These are what `hey .NAME`, `hey @DIR CMD`,
-  `hey wm|host|theme CMD` resolve to.``
+  config's bin/. These are what `hey .NAME`, `hey @DIR CMD` and
+  `hey wm|host CMD` resolve to.``
   []
   (def out @[])
   (defn walk [dir]
@@ -214,7 +214,7 @@
         :file (array/push out file))))
   (def home (path/join dir "../.."))
   (walk (path/join home "bin"))
-  (each area ["hosts" "config" "modules/themes"]
+  (each area ["hosts" "config"]
     (each name (try (os/dir (path/join home area)) ([_] []))
       (walk (path/join home area name "bin"))))
   (sorted out))

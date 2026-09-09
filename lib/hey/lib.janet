@@ -259,8 +259,7 @@
                   (or (os/getenv "DOTFILES_HOME")
                       (error "DOTFILES_HOME not set")))
           :user  (os/getenv "USER")
-          :host  (or (os/getenv "HOST") (string/chomp (slurp "/etc/hostname")))
-          :theme (or (os/getenv "THEME") (flake/info :theme :active))}))
+          :host  (or (os/getenv "HOST") (string/chomp (slurp "/etc/hostname")))}))
 
 (defn flake [&opt key]
   (if key (get (*flake*) key) (*flake*)))

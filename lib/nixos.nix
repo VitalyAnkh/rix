@@ -77,7 +77,6 @@ rec {
             libDir      = "${dir}/lib";
             configDir   = "${dir}/config";
             modulesDir  = "${dir}/modules";
-            themesDir   = "${dir}/modules/themes";
             hostDir     = "${path}";
           };
           mkModules = filterMapAttrs
@@ -122,7 +121,6 @@ rec {
             ++ (host.imports or [])
             ++ [ {
               modules = host.modules or {};
-              # theme = host.theme or {};
             } ]
             ++ [ (host.config or {}) (host.hardware or {}) ];
           }) hosts;

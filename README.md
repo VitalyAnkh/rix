@@ -108,7 +108,6 @@ COMMANDS:
   - swap|sw    -- Swap nix-store symlinks with mutable copies (and back)
   - sync|s     -- Rebuild this flake (using nixos-rebuild).
   - test       -- Run the Hey and/or Nix test suites.
-  - theme      -- Dispatch to the active theme's bin.
   - vars       -- Get or set session or persistent state in userspace.
   - which      -- Print a command's path (with arguments) without running it.
   - wm         -- Dispatch to config/$WM/bin.

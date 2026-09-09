@@ -25,7 +25,7 @@ function main() {
     git clone --recursive "$url" "$flake"
   fi
   
-  export HEYENV="{\"user\":\"$user\",\"host\":\"$host\",\"path\":\"$flake\",\"theme\":\"$THEME\"}"
+  export HEYENV="{\"user\":\"$user\",\"host\":\"$host\",\"path\":\"$flake\"}"
   nixos-install \
       --impure \
       --show-trace \
