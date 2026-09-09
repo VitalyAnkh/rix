@@ -45,3 +45,22 @@ function my.dsp.layout(bind_table)
         end
     end
 end
+
+function my.dsp.resize_width_to(spec)
+  return function()
+    local w = hl.get_active_window()
+    if not w then return end
+    local m = w.monitor
+    local usable = m.width / m.scale - m.reserved.left - m.reserved.right
+    local frac = math.max(0.1, math.min(1.0, spec > 1 and spec / usable or spec))
+    local px = spec > 1 and spec or math.floor(usable * frac)
+    local layout = not w.floating and hl.get_active_workspace().tiled_layout
+    if layout == "scrolling" then
+      hl.dispatch(hl.dsp.layout("colresize " .. frac))
+    elseif layout == "master" then
+      hl.dispatch(hl.dsp.layout("mfact exact " .. (w.layout.is_master and frac or 1 - frac)))
+    else
+      hl.dispatch(hl.dsp.window.resize({ x = px, y = w.size.y }))
+    end
+  end
+end

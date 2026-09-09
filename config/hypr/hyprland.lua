@@ -368,6 +368,11 @@ for i = 1, 10 do
     hl.bind("SUPER + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
 end
 
+-- Quick-resize windows
+for i, spec in ipairs({ 640, 0.4, 0.5, 0.6, 0.7, 0.8 }) do
+  hl.bind("SUPER + CTRL + " .. i, my.dsp.resize_width_to(spec))
+end
+
 -- ** Move/resize windows with mouse LMB/RMB
 hl.bind("SUPER + mouse:272",      hl.dsp.window.drag(),   { mouse = true })
 hl.bind("SUPER + mouse:273",      hl.dsp.window.resize(), { mouse = true })
