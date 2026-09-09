@@ -2,33 +2,35 @@
 # Prints a path to a subarea of my dotfiles.
 #
 # SYNOPSIS:
-#   path [-e] [-a] [AREA] [SEGMENTS...]
+#   path [-e|-f|-d] [-a] [AREA] [SEGMENTS...]
 #
 # OPTIONS:
-#   -e
-#     Return nothing if resulting path doesn't exist.
-#   -d, -f
-#     Return nothing if resulting path isn't a directory or file (respectively).
+#   -e | -f | -d
+#     Return nothing if the resulting path doesn't exist, isn't a file, or isn't
+#     a directory, respectively.
 #   -a
 #     Abbreviate $HOME/ to ~/ in resulting path.
 #
-# VALID AREAS:
-#   home           $DOTFILES_HOME
-#   bin            $DOTFILES_HOME/bin
-#   cache          $XDG_CACHE_HOME/hey
-#   config         $XDG_CONFIG_HOME/hey
-#   data           $XDG_DATA_HOME/hey
-#   hosts          $DOTFILES_HOME/hosts
-#   host           {hosts}/$HOST/
-#   lib            $DOTFILES_HOME/lib
-#   modules        $DOTFILES_HOME/modules
-#   runtime        $XDG_RUNTIME_DIR/hey
-#   state          $XDG_STATE_HOME/hey
-#   themes         {modules}/themes
-#   theme          {themes}/{THEME}
-#   wm             $DOTFILES_HOME/config/{WM}/
-#   wm*            $XDG_CONFIG_HOME/{WM}/
-#   xdg DIR        $XDG_{DIR}_HOME
+# ARGUMENTS:
+#   1 AREA
+#     home           $DOTFILES_HOME
+#     assets         {home}/assets
+#     bin            {home}/bin
+#     cache          $XDG_CACHE_HOME/hey
+#     config         {home}/config
+#     data           $XDG_DATA_HOME/hey
+#     hosts          {home}/hosts
+#     host           {hosts}/$HOST
+#     lib            {home}/lib
+#     modules        {home}/modules
+#     runtime        $XDG_RUNTIME_DIR/hey
+#     state          $XDG_STATE_HOME/hey
+#     wm             {config}/$WM
+#     wm*            $XDG_CONFIG_HOME/$WM
+#     profile        The system nix profile.
+#     profile*       The user nix profile.
+#     xdg            $XDG_{DIR}_HOME, where DIR is the next segment.
+#   * SEGMENT @path-segment
 
 (use hey)
 (use hey/cmd)

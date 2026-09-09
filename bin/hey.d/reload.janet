@@ -2,13 +2,11 @@
 # Reload running services.
 #
 # SYNOPSIS:
-#   reload [-w|--wm] [-n|--nixos]
+#   reload
 #
 # DESCRIPTION:
-#   TODO
-#
-# OPTIONS:
-#   TODO
+#   Triggers the onReload hook, which restarts or reloads whatever the active
+#   host and window manager have registered for it.
 
 (use hey)
 (use hey/cmd)

@@ -83,10 +83,12 @@ SYNOPSIS:
   hey [-?|-??|-???|-!] [-h|--help] COMMAND [ARGS...]
 
 OPTIONS:
-  -!           -- Do a dry run. WARNING: It's up to called scripts to obey!
-  -?,-??,-???  -- Enable debug (verbose) mode.
-  -h,--help    -- Display the documentation embedded in a target script's
-                  header.
+  -!
+    Do a dry run. WARNING: It's up to called scripts to obey!
+  -? | -?? | -???
+    Enable debug (verbose) mode, at increasing verbosity.
+  -h, --help
+    Display the documentation embedded in a target script's header.
 
 COMMANDS:
   - build|b    -- Build nix images or recompile bin/hey

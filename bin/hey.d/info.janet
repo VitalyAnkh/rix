@@ -1,10 +1,19 @@
 #!/usr/bin/env janet
-# TODO
+# Display information about the current system (JSON).
 #
 # SYNOPSIS:
 #   info [-r] [KEYS...]
-#   info [-r] ip [-w|-l]
+#   info [-r] ip [-w]
 #   info [user/repo|https://url/to/git/repo]
+#
+# OPTIONS:
+#   -r
+#     Print raw values instead of JSON.
+#   -w
+#     Query the WAN address instead of the LAN one.
+#
+# ARGUMENTS:
+#   * KEY @info-keys
 
 (use hey)
 (use hey/cmd)

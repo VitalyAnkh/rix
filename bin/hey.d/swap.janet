@@ -15,14 +15,17 @@
 #   destroyed when restored!
 #
 # OPTIONS:
-#   -f
-#     Don't ask for confirmation; overwrite files as needed.
 #   -u
 #     Unswap the targeted files instead of trying to swap them.
-#   -l, --ls
+#   -f
+#     Don't ask for confirmation; overwrite files as needed.
+#   -l, --list
 #     List all known swapped files.
 #   --reset
 #     Unswap all known swapped files.
+#
+# ARGUMENTS:
+#   * FILE @files
 
 (use hey)
 (use hey/cmd)

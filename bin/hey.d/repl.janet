@@ -2,12 +2,15 @@
 # Open a nix or janet repl with this flake preloaded.
 #
 # SYNOPSIS:
-#   repl [FLAKES...]
+#   repl [-j|-d] [FLAKES...]
 #
 # OPTIONS:
-#   -j
-#     Start a Janet REPL instead.
+#   -j | -d
+#     Start a Janet REPL with HeyLib preloaded, or a nix-develop REPL, instead
+#     of a Nix REPL.
 #
+# ARGUMENTS:
+#   * FLAKE @files
 
 (use hey)
 (use hey/cmd)

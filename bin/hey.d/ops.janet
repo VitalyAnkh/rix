@@ -1,8 +1,11 @@
 #!/usr/bin/env janet
-# Operate on remote HeyOS-powed hosts.
+# Operate on remote HeyOS-powered hosts.
 #
 # SYNOPSIS:
-#   opts COMMAND [ARGS...]
+#   ops COMMAND [ARGS...]
+#
+# DESCRIPTION:
+#   Not implemented yet.
 
 (use hey)
 (use hey/cmd)

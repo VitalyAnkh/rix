@@ -4,8 +4,13 @@
 # SYNOPSIS:
 #   swap-pane [up|down|left|right|master]
 #
-# DESCRIPTION:
-#   TODO
+# ARGUMENTS:
+#   1 DIRECTION
+#     up        -- Swap with the pane above.
+#     down      -- Swap with the pane below.
+#     left      -- Swap with the pane to the left.
+#     right     -- Swap with the pane to the right.
+#     master    -- Swap with the master pane.
 
 local target
 case $1 in

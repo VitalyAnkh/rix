@@ -1,8 +1,21 @@
 #!/usr/bin/env janet
-# TODO
+# Get or set session or persistent state in userspace.
 #
 # SYNOPSIS:
-#   vars [get|set|ls] ...
+#   vars [-g]
+#   vars [-g] get VAR
+#   vars [-g] set VAR VALUE
+#
+# OPTIONS:
+#   -g
+#     Operate on persistent (global) vars.
+#
+# ARGUMENTS:
+#   1 COMMAND
+#     get     -- Print a var.
+#     set     -- Assign a var.
+#   2 VAR @vars
+#   3 VALUE
 
 (use hey)
 (use hey/cmd)

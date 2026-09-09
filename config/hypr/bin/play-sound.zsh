@@ -1,11 +1,21 @@
 #!/usr/bin/env zsh
 # Plays a notification sound.
 #
-# SYNPOSIS:
-#   play-sound NAME
+# SYNOPSIS:
+#   play-sound [-v VOLUME] NAME
+#   play-sound ls
 #
 # DESCRIPTION:
-#   TODO
+#   NAME is the basename of an .ogg, .wav or .mp3 file in `hey path assets
+#   sounds`. Note that -v must follow NAME, not precede it.
+#
+# OPTIONS:
+#   -v VOLUME
+#     Play at VOLUME rather than the default.
+#
+# ARGUMENTS:
+#   1 NAME
+#     ls    -- List the available sounds instead of playing one.
 
 if (( $# == 0 )); then
   hey.error "Name of sound required"

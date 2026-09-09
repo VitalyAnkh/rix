@@ -6,11 +6,18 @@
 #   pull [INPUTS]...
 #   pull -o [INPUT@REV|INPUT=FLAKE_URI]...
 #
+# OPTIONS:
+#   -o, --override
+#     Repin inputs (INPUT@REV or INPUT=FLAKE_URI).
+#
+# ARGUMENTS:
+#   * INPUT @inputs
+#
 # EXAMPLES:
 #   hey pull
 #     Update all flakes:
 #   hey pull waybar 'hypr*'
-#     Pull only specific inputs (globs are recognized):
+#     Pull only specific inputs (globs are recognized, and a leading ! excludes):
 #   hey pull -o waybar@0b6476da32d181ee6b2cabdc5205a46a90521a75 ...
 #   hey pull -o waybar=github:aForkOf/Waybar ...
 #     A more concise command for repinning inputs.

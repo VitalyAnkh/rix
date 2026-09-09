@@ -2,13 +2,20 @@
 # Capture (and edit) a screenshot to clibpoard.
 #
 # SYNOPSIS:
-#   screen-capture [last|region|window|output]
+#   screenshot [last|region|window|output]
 #
 # DESCRIPTION:
 #   Captures a screenshot and sends it to satty.
 #
 #   The region selection in `dms screenshot` seemed slow, so I prefer the
 #   slurp+grim+swappy stack.
+#
+# ARGUMENTS:
+#   1 TARGET
+#     last      -- Reuse the previous selection.
+#     region    -- Select an arbitrary region (the default).
+#     window    -- Select a window.
+#     output    -- Select a monitor.
 
 main() {
   set -eo pipefail

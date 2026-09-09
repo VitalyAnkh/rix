@@ -2,10 +2,13 @@
 # Manage and insert from bitwarden.
 #
 # SYNOPSIS:
-#   vaultmenu
+#   vaultmenu [-r] [-l]
 #
-# DESCRIPTION:
-#   TODO
+# OPTIONS:
+#   -r
+#     Reload the cached item list.
+#   -l
+#     Resume with the last item, skipping the menu.
 
 (use hey)
 (use hey/cmd)

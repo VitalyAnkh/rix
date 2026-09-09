@@ -1,8 +1,21 @@
 #!/usr/bin/env janet
-# TODO
+# Build nix images, or recompile bin/hey.
 #
 # SYNOPSIS:
-#   build ...
+#   build [-a]
+#   build iso [-a]
+#   build vm|vm-with-bootloader
+#
+# OPTIONS:
+#   -a
+#     Build hey's dependencies too.
+#
+# ARGUMENTS:
+#   1 TARGET
+#     iso                       -- Build an ISO for this host.
+#     vm                        -- Build a VM of this flake.
+#     vm-with-bootloader        -- Build a VM with a bootloader.
+#   ** ARGS @default
 
 (use hey)
 (use hey/cmd)

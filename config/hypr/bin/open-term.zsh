@@ -2,11 +2,22 @@
 # Open a foot terminal.
 #
 # SYNOPSIS:
-#   open-term [TITLE] [COMMAND] [ARGS...]
+#   open-term [-t TITLE] [-f FONT] [-F N] [-o OPT]... [FOOTARGS...] [-- TMUXARGS...]
 #
 # DESCRIPTION:
-#   Opens a foot terminal with a new Tmux session. If opened from a special
-#   (Hypr) workspace, a larger font and lower opacity is used.
+#   Arguments before a literal -- are passed to foot; those after it are passed
+#   to tmux. With a TITLE, the terminal is named and attached to a tmux session
+#   of the same name.
+#
+# OPTIONS:
+#   -o OPT
+#     Pass an option to foot (-o key=value). May be repeated.
+#   -t, --title TITLE
+#     Name the terminal, and attach it to a tmux session of that name.
+#   -f, --font FONT
+#     Use FONT instead of the configured one.
+#   -F, --font-adjust N
+#     Adjust the font size by N points.
 
 zparseopts -E -D -F -- o+:=opts \
                        {t,-title}:=title \

@@ -2,10 +2,10 @@
 # Select a window with slurp and get it's hyprctl metadata.
 #
 # SYNOPSIS:
-#   get-window [-w]
+#   get-window [GEOMETRY]
 #
 # DESCRIPTION:
-#   TODO
+#   Without GEOMETRY ("X,Y WxH"), prompts for a window with slurp.
 
 main() {
   local hypr_tree=$(hyprctl clients -j)

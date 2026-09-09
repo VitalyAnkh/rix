@@ -1,9 +1,29 @@
 #!/usr/bin/env janet
-# TODO
+# Rebuild this flake (using nixos-rebuild).
 #
 # SYNOPSIS:
-#   sync [...]
-#   sync --rollback [GENERATION]
+#   sync [--fast] [--host HOST] [COMMAND] [ARGS...]
+#   sync rollback [GENERATION]
+#
+# OPTIONS:
+#   --fast
+#     Skip nix's evaluation checks.
+#   --host HOST @hosts
+#     Build the config of another host.
+#
+# ARGUMENTS:
+#   1 COMMAND
+#     switch                    -- Build, activate, and make the default boot entry.
+#     boot                      -- Build and make the default boot entry.
+#     test                      -- Build and activate, but do not add a boot entry.
+#     build                     -- Build only.
+#     dry-build                 -- Show what would be built.
+#     dry-activate              -- Show what would be activated.
+#     build-vm                  -- Build a VM of this flake.
+#     build-vm-with-bootloader  -- Build a VM with a bootloader.
+#     rollback                  -- Switch back to an older generation.
+#     check                     -- Run nix flake check.
+#   * ARGS @sync-arg
 
 (use hey)
 (use hey/cmd)

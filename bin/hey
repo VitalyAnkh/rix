@@ -7,37 +7,19 @@
 # system profile (rollback or diffing), updating flakes, and dotfile management
 # (and then some).
 #
+# For a list of subcommands run `hey help`, or `hey help --dump` for a
+# machine-readable dump.
+#
 # SYNOPSIS:
 #   hey [-?|-??|-???|-!] [-h|--help] COMMAND [ARGS...]
 #
 # OPTIONS:
-#   -!           -- Do a dry run. WARNING: It's up to called scripts to obey!
-#   -?,-??,-???  -- Enable debug (verbose) mode.
-#   -h,--help    -- Display the documentation embedded in a target script's
-#                   header.
-#
-# COMMANDS:
-#   - build|b    -- Build nix images or recompile bin/hey
-#   - exec       -- Dispatch to $DOTFILES_HOME/{,hosts/$HOST,config/$WM}/bin/shim.d $PATH
-#   - get|set    -- Alias for hey vars {get,set} ...
-#   - gc         -- Run garbage collection on the user's/system's profile
-#   - help|h     -- Display documentation for the command
-#   - hook       -- Trigger scripts associated with an event
-#   - host       -- Dispatch to $DOTFILES_HOME/hosts/$HOST/bin
-#   - info       -- Display information about current system (JSON)
-#   - path       -- Display path to area of my dotfiles
-#   - profile    -- Manage or analyze a system or user nix profile
-#   - pull       -- Update flake inputs
-#   - reload     -- Run onReload hooks
-#   - repl       -- Open a Janet, Nix, or nix-develop REPL
-#   - swap       -- Swap nix-store symlinks with copies (and back)
-#   - sync|s     -- Rebuild this flake (using nixos-rebuild)
-#   - test       -- Run Hey and/or Nix test suites
-#   - which      -- Print out the script's path (with arguments) w/o executing it
-#   - wm         -- Dispatch to $DOTFILES_HOME/config/$WM/bin
-#   - vars       -- Get or set session or persistent state in userspace.
-#   - @*         -- Dispatch to $DOTFILES_HOME/config/${1#@}/bin
-#   - .*         -- Execute first script found under host, wm, or $DOTFILES_HOME/bin.
+#   -!
+#     Do a dry run. WARNING: It's up to called scripts to obey!
+#   -? | -?? | -???
+#     Enable debug (verbose) mode, at increasing verbosity.
+#   -h, --help
+#     Display the documentation embedded in a target script's header.
 
 (use hey)
 (use hey/cmd)
@@ -58,10 +40,12 @@
 
 (defn main [_ & args]
   (dispatch [[:build :b]    (cmd 'build)
-             [:get :set]    |[:eval (cmd 'vars) ;$&]
+             [:get :set]    (with-doc "Alias for hey vars {get,set} ..."
+                              |[:eval (cmd 'vars) ;$&])
              :gc            (cmd 'gc)
              :hook          (cmd 'hook)
-             :host          |[:exec (path (keyword $0) "bin") ;$&]
+             :host          (with-doc "Dispatch to hosts/$HOST/bin."
+                              |[:exec (path (keyword $0) "bin") ;$&])
              :info          (cmd 'info)
              :ops           (cmd 'ops)
              :path          (cmd 'path)
@@ -71,18 +55,25 @@
              :repl          (cmd 'repl)
              [:swap :sw]    (cmd 'swap)
              [:sync :s]     (cmd 'sync)
-             :test          |[:exec "judge" (path :home "test/hey") ;(slice $& 1)]
-             :theme         |[:exec (path (keyword $0) "bin") ;$&]
+             :test          (with-doc "Run the Hey and/or Nix test suites."
+                              |[:exec "judge" (path :home "test/hey") ;(slice $& 1)])
+             :theme         (with-doc "Dispatch to the active theme's bin."
+                              |[:exec (path (keyword $0) "bin") ;$&])
              :vars          (cmd 'vars)
-             :wm            |[:exec (path (keyword $0) "bin") ;$&]
-             :exec          |[:exec (or (path/find $1)
-                                        (abort "%s: command not found" $1))
-                                    ;$&]
-             '(+ "./" "/")  |[:exec ;$&]
-             '(* ".")       |[:exec ;(or (resolve [(path :host "bin")
-                                                   (path :wm "bin")
-                                                   (path :bin)]
-                                                  (slice $0 1) ;$&)
-                                         (abort "%s: command not found" $0))]
-             '(* "@")       |[:exec (path :config (slice $0 1) :bin) ;$&]]
+             :wm            (with-doc "Dispatch to config/$WM/bin."
+                              |[:exec (path (keyword $0) "bin") ;$&])
+             :exec          (with-doc "Execute a program on $PATH through hey."
+                              |[:exec (or (path/find $1)
+                                          (abort "%s: command not found" $1))
+                                      ;$&])
+             '(+ "./" "/")  (with-doc "Execute a script by path." "./"
+                              |[:exec ;$&])
+             '(* ".")       (with-doc "Execute the first script found under host, wm, or bin/." ".*"
+                              |[:exec ;(or (resolve [(path :host "bin")
+                                                     (path :wm "bin")
+                                                     (path :bin)]
+                                                    (slice $0 1) ;$&)
+                                           (abort "%s: command not found" $0))])
+             '(* "@")       (with-doc "Dispatch to config/DIR/bin." "@*"
+                              |[:exec (path :config (slice $0 1) :bin) ;$&])]
             ;args))

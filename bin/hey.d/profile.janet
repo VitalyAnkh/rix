@@ -1,20 +1,29 @@
 #!/usr/bin/env janet
 # Operate on the nixos profile.
 #
-# SUBCOMMANDS:
-#   rm -- Remove a system generation.
-#   ls -- List all system generations.
+# SYNOPSIS:
+#   profile [-u]
+#   profile [-r] ls
+#   profile [-r] rm [GEN...]
+#   profile [-r] diff FROM [TO]
 #
-# SYNOPSIS
-#   profile
-#   profile ls
-#   profile rm [GEN]
-#   profile diff FROM [TO]
+# OPTIONS:
+#   -r
+#     Refresh the cached generation list.
+#   -u, --user
+#     Target the user profile.
+#
+# ARGUMENTS:
+#   1 COMMAND
+#     ls      -- List all system generations.
+#     rm      -- Remove a system generation.
+#     diff    -- Diff two system generations.
+#   * GENERATION @profile-arg
 #
 # EXAMPLES:
-#   hey rm 1042
+#   hey profile rm 1042
 #     Remove system generation 1042.
-#   hey rm -1
+#   hey profile rm -1
 #     Remove the last generation (before the current one).
 
 (use hey)

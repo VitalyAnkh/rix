@@ -168,6 +168,24 @@
   (echo ;(take-while! keyword? args)
          (string/format (first args) ;(slice args 1))))
 
+# init.janet's with-handled-exits turns :exit-handled on, so that exit unwinds
+# through its handlers instead of leaving them unrun. These live here rather
+# than beside it so docs.janet can reach them without importing init.
+(defdyn *exit-handled*)
+
+(defn exit [&opt code]
+  (default code 0)
+  (if (dyn :exit-handled)
+    (error [:exit code])
+    (os/exit code)))
+
+(defn abort [message & args]
+  (echof :error message ;args)
+  (exit 127))
+
+(defn not-implemented [& args]
+  (abort "Not implemented yet! %q" args))
+
 (defn path/no-ext
   "Remove any (or a specific) file extension from PATH."
   [path & exts]

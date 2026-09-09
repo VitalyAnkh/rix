@@ -2,11 +2,18 @@
 # Select a monitor, region, or window with slurp.
 #
 # SYNOPSIS:
-#   slurp [output|region|window] [...]
+#   slurp [last|output|region|window] [...]
 #
 # DESCRIPTION:
 #   Extends slurp to more closely mirror slop's interface. Passes all arguments
 #   to slurp.
+#
+# ARGUMENTS:
+#   1 TARGET
+#     last      -- Reuse the previous selection.
+#     output    -- Select a monitor.
+#     region    -- Select an arbitrary region.
+#     window    -- Select a window.
 
 main() {
   hey.requires slurp

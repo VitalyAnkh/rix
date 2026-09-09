@@ -4,7 +4,17 @@
 # Hooks are stored in $DOTFILES_HOME/config/$WM/bin/hook.d/*.zsh.
 #
 # SYNOPSIS:
-#   hook HOOK [ARGS...]
+#   hook [-f] [-v] HOOK [ARGS...]
+#
+# OPTIONS:
+#   -f
+#     Trigger the hook even if it is redundant.
+#   -v
+#     Be verbose.
+#
+# ARGUMENTS:
+#   1 HOOK @hooks
+#   ** ARGS @default
 #
 # RECOGNIZED HOOKS:
 #   on-startup
@@ -14,7 +24,7 @@
 #   on-lock
 #   on-unlock
 #   on-battery [charging|discharging|*] [ARGS...]
-#   on-discarging
+#   on-discharging
 
 (use hey)
 (use hey/cmd)

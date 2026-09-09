@@ -2,7 +2,11 @@
 # Optimize images and PDF files (losslessly by default).
 #
 # SYNOPSIS:
-#   optimize [-lh] FILES|DIRS...
+#   optimize [-l|-L] FILES|DIRS...
+#
+# OPTIONS:
+#   -l | -L
+#     Enable lossy compression, or do *only* lossy compression, respectively.
 #
 # EXAMPLES:
 #   optimize image.jpg image.png image.gif
@@ -19,11 +23,8 @@
 #   All absent dependencies (except for bc) are auto-installed with
 #   cached-nix-shell on demand, if needed.
 #
-# OPTIONS:
-#  -l
-#    Enable lossy compression.
-#  -L
-#    *Only* do lossy compression.
+# ARGUMENTS:
+#   * FILE @files
 
 .filesize() { stat --printf="%s" "$1"; }
 

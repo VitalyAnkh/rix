@@ -2,24 +2,12 @@
 (import spork/json :export true)
 (import sh :export true :prefix "")
 (import ./lib :export true :prefix "")
+(import ./docs :export true :prefix "")
 
 # Janet lacks an analogue for 'trap X EXIT'; I emulate this with handle-exit,
 # defer, and os/sigaction. However, this causes os/sleep to be uninterruptable.
+# exit and abort live in ./lib, so that ./docs can reach them.
 (def- *exit-handlers* @[])
-(defdyn *exit-handled*)
-
-(defn exit [&opt code]
-  (default code 0)
-  (if (dyn :exit-handled)
-    (error [:exit code])
-    (os/exit code)))
-
-(defn abort [message & args]
-  (echof :error message ;args)
-  (exit 127))
-
-(defn not-implemented [& args]
-  (abort "Not implemented yet! %q" args))
 
 (defmacro- with-handled-exits [& body]
   (defn- on-exit [type]
@@ -98,51 +86,33 @@
 (defn resolve-dir [base & args]
   (resolve-1 :directory base ;args))
 
-(defn help [[file & _args] &opt output]
-  (unless (path/exists? file)
-    (errorf "File does not exist: %s" (path/abbrev file)))
-  (with-dyns [*out* (or output stdout)]
-    (with [f (file/open file :rn)]
-      (let [peg (peg! '(* "#" (between 0 1 " ")))
-            buf @""]
-        (var line (file/read f :line))
-        (unless (string/has-prefix? "#!/" line)
-          (abort "Not a script: %s" (path/abbrev file)))
-        (while (set line (file/read f :line))
-          (unless (string/has-prefix? "#" line)
-            (break))
-          (buffer/push buf (peg/replace peg "" line)))
-        (when (empty? buf)
-          (abort "No documentation for %s" (path/abbrev file)))
-        (echo (string/chomp buf)))))
-    # TODO: Parse these doc headings into table
-    # TODO: Search sub-directory for extra subcommands.
-  )
-
 (defn- dispatcher-for [rules &opt command & args]
   (unless command (break))
   (let [odd? (odd? (length rules))
-        cmd (get (find (fn [[pat dest]]
-                         (case (type pat)
-                           :function (pat command ;args)
-                           :keyword  (= pat (keyword command))
-                           :string   (= pat command)
-                           :tuple    (if (keyword? (first pat))
-                                       (index-of (keyword command) pat)
-                                       (peg/match pat command))
-                           (abort "Invalid rule pattern: %q" pat)))
-                       (if command
-                         (partition 2 (slice rules 0 (if odd? -2 -1)))
-                         []))
-                 1 (cond (not odd?) nil
-                         (string? (last rules)) |[:exec (last rules) ;$&]
-                         (last rules)))
-        spec (case* (type cmd)
-               :function (cmd command ;args)
-               :struct [:eval cmd ;args]
-               :string [:exec cmd ;args]
+        rule (get (find (fn [[pat dest]]
+                          (case (type pat)
+                            :function (pat command ;args)
+                            :keyword  (= pat (keyword command))
+                            :string   (= pat command)
+                            :tuple    (if (keyword? (first pat))
+                                        (index-of (keyword command) pat)
+                                        (peg/match pat command))
+                            (abort "Invalid rule pattern: %q" pat)))
+                        (if command
+                          (partition 2 (slice rules 0 (if odd? -2 -1)))
+                          []))
+                  1 (cond (not odd?) nil
+                          (string? (last rules)) |[:exec (last rules) ;$&]
+                          (last rules)))
+        # with-doc wraps non-struct destinations in {:fn ... :doc ...}. A cmd
+        # struct has no :fn, so it falls through to :struct untouched.
+        dest (if (and (dictionary? rule) (get rule :fn)) (rule :fn) rule)
+        spec (case* (type dest)
+               :function (dest command ;args)
+               :struct [:eval dest ;args]
+               :string [:exec dest ;args]
                :nil nil
-               (abort "Invalid rule destination: %q" cmd))]
+               (abort "Invalid rule destination: %q" dest))]
     (log 2 "dispatcher-for=%q" spec)
     (case (first spec)
       :eval (let [f (in spec 1)]
@@ -155,6 +125,7 @@
                   (case op
                     :which (echo (string/join [file ;cargs] " "))
                     :help  (help [file ;cargs])
+                    :dump  (print-specs (if (struct? f) file))
                     :call  (cmd command ;cargs)))))
       :exec (let [sargs (slice spec 1)]
               (if (empty? sargs)
@@ -164,6 +135,7 @@
                     (case op
                       :which (echo (string/join pargs " "))
                       :help (help pargs)
+                      :dump (print-specs (first pargs))
                       :call (os/execute pargs :p)))
                   (abort "Unknown command: %q" command))))
       (abort "Unknown command: %q" command))))
@@ -217,17 +189,29 @@
       # system units or cronjobs).
       (with-envvars ["PATH" (string/join exec-path ":")
                      "DOTFILES_HOME" (path :home)]
-        (if-let [args [;(filter |(not (index-of $ ["-?" "-??" "-???" "-!" "-h" "--help"])) largs)
-                       ;rargs]
-                 op (case* (first args)
-                      ["h" "help"] :help
-                       "which" :which
-                       :call)
-                 cmd (dispatcher-for rules ;(slice args (if (= op :call) 0 1)))]
-          (cmd (if help? :help op))
-          (do (echo :error "Subcommand required.\n")
-              (help [(dyn :script) ;args] *err*)
-              (exit 1)))))))
+        (let [args [;(filter |(not (index-of $ ["-?" "-??" "-???" "-!" "-h" "--help"])) largs)
+                    ;rargs]
+              op (case* (first args)
+                   ["h" "help"] :help
+                    "which" :which
+                    :call)]
+          (cond
+            (and (= op :help) (= (get args 1) "--scan"))
+            (print-scan ;(slice args 2))
+
+            (and (= op :help) (= (get args 1) "--dump"))
+            (if-let [command (get args 2)
+                     cmd (dispatcher-for rules ;(slice args 2))]
+              (cmd :dump)
+              (print-commands rules))
+
+            (if-let [cmd (dispatcher-for rules ;(slice args (if (= op :call) 0 1)))]
+              (cmd (if help? :help op))
+              (do (echo :error "Subcommand required.\n")
+                  (help [(dyn :script) ;args] *err*)
+                  (echo "\nCOMMANDS:")
+                  (echo (format-commands rules))
+                  (exit 1)))))))))
 
 (defmacro dispatch [rules & args]
   ~(,dispatch-1 ,(dyn :current-file) [,;rules] ;args))

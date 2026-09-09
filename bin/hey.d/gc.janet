@@ -2,7 +2,7 @@
 # Garbage collect and optimize the nix store.
 #
 # SYNOPSIS:
-#   gc [-a|--all] [--system] [-d]
+#   gc [-a] [-s] [-d] [-D]
 #
 # OPTIONS:
 #   -a
@@ -10,9 +10,9 @@
 #   -s
 #     Only GC the system profile.
 #   -d
-#     Delete profile and profile data older than 14d
+#     Delete profiles and profile data older than 14d.
 #   -D
-#     Delete *all* profiles.
+#     Delete *all* old profiles.
 
 (use hey)
 (use hey/cmd)

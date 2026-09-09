@@ -2,7 +2,7 @@
 # Record a region of the screen to clipboard.
 #
 # SYNOPSIS:
-#   screencast [webm|mp4|gif] [X,Y WxH] [DELAY]
+#   screencast [webm|mp4|gif] [TARGET] [DELAY]
 #
 # DESCRIPTION:
 #   Prompts the user to select a region, window, or monitor to begin recording
@@ -13,6 +13,18 @@
 #   wf-recorder, ffmpeg, gifsicle*
 #
 #   * Is auto-installed with cached-nix-shell when needed.
+#
+# ARGUMENTS:
+#   1 FORMAT
+#     webm      -- Optimized for short recordings of text or code (the default).
+#     mp4       -- Optimized for high-motion content.
+#     gif       -- Produce an animated gif.
+#   2 TARGET
+#     last      -- Reuse the previous selection.
+#     region    -- Select an arbitrary region (the default).
+#     window    -- Select a window.
+#     output    -- Select a monitor.
+#   3 DELAY
 
 main() {
   hey.requires wf-recorder ffmpeg

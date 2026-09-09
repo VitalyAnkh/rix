@@ -3,6 +3,12 @@
 #
 # SYNOPSIS:
 #   bookmarkmenu [-r|--reload] [--profile PROFILE]
+#
+# OPTIONS:
+#   -r, --reload
+#     Reload the cached bookmark list.
+#   --profile PROFILE
+#     Read bookmarks from PROFILE instead of the default one.
 
 (use hey)
 (use hey/cmd)

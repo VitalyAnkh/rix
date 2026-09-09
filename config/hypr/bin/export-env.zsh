@@ -2,20 +2,21 @@
 # Propagate envvars to systemd or tmux.
 #
 # SYNOPSIS:
-#   export-env [systemd|tmux] [ENVVARS...]
+#   export-env [-a|--all] [systemd|tmux] [ENVVARS...]
 #
 # DESCRIPTION:
 #   Propagate ENVVARS to an external tool (like systemd or tmux). If ENNVARS are
 #   omitted, a set of sensible envvars are exported. If given -a or --all, the
 #   whole environment is exported (dangerous!).
 #
-# SUBCOMMANDS:
-#   tmux         import to tmux server
-#   system       import to systemd and dbus user session
-#
 # OPTIONS:
 #   -a, --all
 #     Export the whole environment, rather than just a select few.
+#
+# ARGUMENTS:
+#   1 TARGET
+#     systemd   -- Import to the systemd and dbus user session.
+#     tmux      -- Import to the tmux server.
 
 zparseopts -E -D -F -- {a,-all}=all || exit 1
 
