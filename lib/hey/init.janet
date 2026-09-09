@@ -49,7 +49,7 @@
 (defn- resolve-1 [kind base & args]
   (if (index-of (type base) [:array :tuple])
     (some |(resolve-1 kind $ ;args) base)
-    (let [base (if (path/abspath? base) base (path/find base))]
+    (let [base (if (path/abspath? base) base (or (path/find base) base))]
       (case (os/stat base :mode)
         nil nil
         :file [base ;args]

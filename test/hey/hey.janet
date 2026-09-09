@@ -23,6 +23,14 @@
     (resolve= :f [mock sub deeper])
     (resolve= :f [does not exist]))
 
+  # A bare name is a $PATH lookup, and a $PATH miss used to leave the base nil,
+  # which killed os/stat.
+  (deftest "Relative paths"
+    (test (nil? (hey/resolve "definitely/not/here")) true)
+    (test (nil? (hey/resolve "./definitely/not/here")) true)
+    (test (nil? (hey/resolve "definitely-not-a-command-on-path")) true)
+    (test (truthy? (hey/resolve "janet")) true))
+
   (deftest "Forwarding options"
     (resolve= :f [hey.d sub deeper -b]            ["hey.d/sub.d/deeper.zsh" "-b"])
     (resolve= :f [hey.d sub deeper --foo]         ["hey.d/sub.d/deeper.zsh" "--foo"])
