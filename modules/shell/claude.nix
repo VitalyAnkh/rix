@@ -20,13 +20,7 @@ in {
 
     # Respect XDG, damn it!
     environment.sessionVariables = {
-      CLAUDE_CONFIG_DIR = "${hey.configDir}/claude";
+      CLAUDE_CONFIG_DIR = "${config.home.dataDir}/claude";
     };
-
-    home.configFile."claude/settings.json".text = ''
-      {
-        "env": { "DISABLE_AUTOUPDATED": "1" }
-      }
-    '';
   };
 }
