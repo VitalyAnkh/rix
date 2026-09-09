@@ -114,9 +114,9 @@ if [[ $TERM != dumb ]]; then
 
     # Must be explicit because zgenom compile ignores nix-store symlinks
     zgenom compile \
-      $ZDOTDIR/*(-.N) \
-      $ZDOTDIR/.*(-.N) \
-      $ZDOTDIR/completions/_*(-.N) \
+      $ZDOTDIR/*.zsh(-.N) \
+      $ZDOTDIR/.zsh*~*.zwc(-.N) \
+      $ZDOTDIR/completions/_*~*.zwc(-.N) \
       $DOTFILES_HOME/lib/zsh/*~*.zwc(.N)
   fi
 
