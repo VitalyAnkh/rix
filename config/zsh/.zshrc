@@ -91,7 +91,6 @@ if [[ $TERM != dumb ]]; then
   fi
 
   source $ZGEN_DIR/zgenom.zsh
-  zgenom autoupdate   # checks for updates every ~7 days
   if ! zgenom saved; then
     echo "Initializing zgenom"
     rm -frv $ZDOTDIR/*.zwc(N) \
