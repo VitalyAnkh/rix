@@ -31,13 +31,9 @@ end
 
 function my.dsp.layout(bind_table)
     return function()
-        local workspace = hl.get_active_special_workspace() or
-                          hl.get_active_workspace()
-        if not workspace then
-            return
-        end
-
-        local layout = workspace.tiled_layout
+        local ws = hl.get_active_special_workspace() or hl.get_active_workspace()
+        if not ws then return end
+        local layout = ws.tiled_layout
         if bind_table[layout] then
             hl.dispatch(bind_table[layout])
         else

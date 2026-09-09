@@ -186,22 +186,8 @@ hl.workspace_rule({
 
 -- * Window rules
 
-hl.window_rule({   -- see config/hypr/bin/screenshot.zsh
-    name = "swappy",
-    match = { class = "swappy" },
-    dim_around = true
-})
-
-hl.window_rule({   -- see config/hypr/bin/screendraw.zsh
-    name = "gromit-mpx-rule",
-    match = { class = "^(Gromit-mpx)$" },
-    suppress_event = "fullscreen maximize",
-    float = true,
-    no_blur = true,
-    no_max_size = true,
-    no_anim = true,
-    no_shadow = true
-})
+-- no going idle if something is fullscreened
+hl.window_rule({ match={ fullscreen = true }, idle_inhibit = "fullscreen" })
 
 -- In multi-monitor setups where some displays are smaller than others, file
 -- dialogs can "remember" their last size in larger monitors and be maximized
@@ -218,6 +204,18 @@ hl.window_rule({ match={ class = "^librewolf$" }, scrolling_width = 0.8 })
 
 hl.window_rule({ match={ class = "^foot$" }, scrolling_width = 0.3 })
 
+hl.window_rule({ match={ class = "^swappy$" }, dim_around = true }) -- see config/hypr/bin/screenshot.zsh
+
+hl.window_rule({ -- see config/hypr/bin/screendraw.zsh
+    match = { class = "^Gromit-mpx$" },
+    suppress_event = "fullscreen maximize",
+    float = true,
+    no_blur = true,
+    no_max_size = true,
+    no_anim = true,
+    no_shadow = true
+})
+
 
 -- ** Steam
 
@@ -231,7 +229,6 @@ hl.window_rule({
     no_max_size = true,
     min_size = {1, 1}
 })
-
 hl.window_rule({
     name = "steam-main-window",
     match = { class = "steam", initial_title = "Steam" },
@@ -255,11 +252,6 @@ hl.window_rule({
     fullscreen = true,
     float = false,
     tile = false
-})
-
-hl.window_rule({
-    match = { fullscreen = true },
-    idle_inhibit = "fullscreen"
 })
 
 
