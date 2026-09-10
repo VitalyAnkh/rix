@@ -67,7 +67,7 @@ with builtins;
   };
 
   ## local config
-  config = { config, ... }: {
+  config = { config, pkgs, ... }: {
     environment.systemPackages = with pkgs; [
       flex-launcher
     ];
