@@ -187,39 +187,35 @@
           [name documented declared])
         @[]))
 
-# _arguments dies on the *whole* call if any one spec is unparsable, and zsh
-# reports nothing, so a malformed spec silently disables completion for that
-# command. Check every spec the real headers produce.
-(def- spec-peg
-  ~{:esc (* "\\" 1)
-    :group (* "(" (any (if-not ")" 1)) ")")
-    :desc (any (+ :esc (if-not (set "[]") 1)))
-    :field (any (+ :esc (if-not ":" 1)))
-    :action (* ":" :field ":" (any 1))
-    :option (* (? :group) "-" (some (if-not "[" 1)) "[" :desc "]" (? :action) -1)
-    :positional (* (+ (some (range "09")) "*") (between 1 2 ":") :field ":" (any 1) -1)
-    :main (+ :option :positional)})
-
-(defn- dispatchable-scripts
-  ``Every script hey can dispatch to: bin/ and its .d dirs, each host's and
-  config's bin/. These are what `hey .NAME`, `hey @DIR CMD` and
-  `hey wm|host CMD` resolve to.``
-  []
-  (def out @[])
-  (defn walk [dir]
-    (each name (try (os/dir dir) ([_] []))
-      (def file (path/join dir name))
-      (case (os/stat file :mode)
-        :directory (when (string/has-suffix? ".d" name) (walk file))
-        :file (array/push out file))))
-  (def home (path/join dir "../.."))
-  (walk (path/join home "bin"))
-  (each area ["hosts" "config"]
-    (each name (try (os/dir (path/join home area)) ([_] []))
-      (walk (path/join home area name "bin"))))
-  (sorted out))
-
 (deftest hey/specs-are-well-formed
+  # _arguments dies on the *whole* call if any one spec is unparsable
+  (def spec-peg
+    ~{:esc (* "\\" 1)
+      :group (* "(" (any (if-not ")" 1)) ")")
+      :desc (any (+ :esc (if-not (set "[]") 1)))
+      :field (any (+ :esc (if-not ":" 1)))
+      :action (* ":" :field ":" (any 1))
+      :option (* (? :group) "-" (some (if-not "[" 1)) "[" :desc "]" (? :action) -1)
+      :positional (* (+ (some (range "09")) "*") (between 1 2 ":") :field ":" (any 1) -1)
+      :main (+ :option :positional)})
+
+  (defn dispatchable-scripts
+    ``Return all dispatchable hey scripts that it can resolve to.``
+    []
+    (def out @[])
+    (defn walk [dir]
+      (each name (try (os/dir dir) ([_] []))
+        (def file (path/join dir name))
+        (case (os/stat file :mode)
+          :directory (when (string/has-suffix? ".d" name) (walk file))
+          :file (array/push out file))))
+    (let [home (path/join dir "../..")]
+      (walk (path/join home "bin"))
+      (each area ["hosts" "config"]
+        (each name (try (os/dir (path/join home area)) ([_] []))
+          (walk (path/join home area name "bin"))))
+      (sorted out)))
+
   (test (seq [file :in (dispatchable-scripts)
               spec :in (hey/header->specs file)
               :when (not (peg/match spec-peg spec))]
