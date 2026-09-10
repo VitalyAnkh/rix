@@ -20,6 +20,49 @@ rec {
     type = "app";
   };
 
+  mkHey = {
+    flake
+  , dir
+  , hostDir ? dir
+  , args ? {}
+  , packages ? {}
+  , devShell ? {}
+  , apps ? {}
+  }: flake // {
+    inherit args hostDir packages devShell apps;
+    modules =
+      filterMapAttrs
+        (_: i: i ? nixosModules)
+        (_: i: i.nixosModules)
+        flake.inputs;
+    dir =
+      if dir != "" then dir
+      else abort "No or invalid dir specified: ${dir}";
+    binDir      = "${dir}/bin";
+    libDir      = "${dir}/lib";
+    configDir   = "${dir}/config";
+    modulesDir  = "${dir}/modules";
+  };
+
+  mkHostModules = {
+    host
+  , hostName
+  , pkgs
+  , extraModules ? []
+  }: [
+    {
+      nixpkgs.pkgs = pkgs;
+      networking.hostName = mkDefault hostName;
+    }
+    ../.
+  ]
+  ++ (host.imports or [])
+  ++ [ {
+    modules = host.modules or {};
+  } ]
+  ++ [ (host.config or {}) (host.hardware or {}) ]
+  ++ extraModules;
+
   # FIXME: Refactor me! (Use submodules?)
   mkFlake = {
     self
@@ -69,38 +112,24 @@ rec {
               (_: i: i ? nixosModules)
               (_: i: i.nixosModules)
               inputs;
-          mkDotfiles = dir: {
-            dir =
-              if dir != "" then dir
-              else abort "No or invalid dir specified: ${dir}";
-            binDir      = "${dir}/bin";
-            libDir      = "${dir}/lib";
-            configDir   = "${dir}/config";
-            modulesDir  = "${dir}/modules";
-            hostDir     = "${path}";
+          self' = mkHey {
+            inherit args;
+            flake = self;
+            dir = toString self;
+            hostDir = path;
+            packages = self.packages.${host.system};
+            devShell = self.devShell.${host.system};
+            apps = self.apps.${host.system};
           };
-          mkModules = filterMapAttrs
-            (_: i: i ? nixosModules)
-            (_: i: i.nixosModules);
-          mkSelf = system:
-            self // {
-              inherit args;
-              modules = mkModules self.inputs;
-              packages = self.packages.${system};
-              devShell = self.devShell.${system};
-              apps = self.apps.${host.system};
-            } // (mkDotfiles (toString self));
-          mkHey = system:
-            hey // {
-              inherit args;
-              modules = mkModules hey.inputs;
-              packages = hey.packages.${system};
-              devShell = hey.devShell.${system};
-              apps = hey.apps.${system};
-            } // (mkDotfiles args.path);
-
-          self' = mkSelf host.system;
-          hey' = mkHey host.system;
+          hey' = mkHey {
+            inherit args;
+            flake = hey;
+            dir = args.path;
+            hostDir = path;
+            packages = hey.packages.${host.system};
+            devShell = hey.devShell.${host.system};
+            apps = hey.apps.${host.system};
+          };
           host = config {
             inherit args lib nixosModules;
             hey = hey';
@@ -111,31 +140,25 @@ rec {
             system = host.system;
             specialArgs.self = self';
             specialArgs.hey = hey';
-            modules = [
-              {
-                nixpkgs.pkgs = pkgs;
-                networking.hostName = mkDefault (args.host or hostName);
-              }
-              ../.
-            ]
-            ++ (host.imports or [])
-            ++ [ {
-              modules = host.modules or {};
-            } ]
-            ++ [ (host.config or {}) (host.hardware or {}) ];
+            modules = mkHostModules {
+              inherit host pkgs;
+              hostName = args.host or hostName;
+            };
           }) hosts;
       perSystem = map (system:
-        let withPkgs = pkgs: packageAttrs:
+        let withPkgs = extraArgs: pkgs: packageAttrs:
               mapFilterAttrs
-                (_: v: pkgs.callPackage v { self = self.packages.${system}; })
+                (_: v: pkgs.callPackage v ({ self = self.packages.${system}; } // extraArgs))
                 (_: v: !(v ? meta.platforms) || (elem system v.meta.platforms))
                 packageAttrs;
             pkgs = mkPkgs system nixpkgs (attrValues overlays);
         in filterAttrs (_: v: v.${system} != {}) {
           apps.${system} = apps;
-          checks.${system} = withPkgs pkgs checks;
-          devShells.${system} = withPkgs pkgs devShells;
-          packages.${system} = withPkgs pkgs packages;
+          # test/nixos needs this flake's own inputs and 'self' is already taken
+          # by the package set.
+          checks.${system} = withPkgs { flake = self; } pkgs checks;
+          devShells.${system} = withPkgs {} pkgs devShells;
+          packages.${system} = withPkgs {} pkgs packages;
         }) systems;
     in
       (filterAttrs (n: _: !elem n [

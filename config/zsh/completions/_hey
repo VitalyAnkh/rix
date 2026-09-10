@@ -187,6 +187,23 @@ __hey_inputs() {
   (( $#inputs )) && _wanted inputs expl 'flake input' compadd -a inputs
 }
 
+# The NixOS suites, named as test/nixos/_lib.nix's collectSuites names them: the
+# path under test/nixos, minus the .nix, with "/" turned into "-". Read off the
+# filesystem, not from `hey test -l`, which evaluates the flake twice and is far
+# too slow to hang a TAB on.
+__hey_test_suites() {
+  local expl root=$_hey_root/test/nixos
+  local -a files suites
+  files=( $root/**/*.nix(N.) )
+  files=( ${files#$root/} )
+  # collectSuites skips _private paths, NAME.d directories, and the default.nix
+  # a directory is entered through.
+  files=( ${files:#(*/|)(_*|default.nix)} )
+  files=( ${files:#*.d/*} )
+  suites=( ${${files%.nix}//\//-} )
+  (( $#suites )) && _wanted suites expl 'nixos suite' compadd -a suites
+}
+
 __hey_info_keys() {
   local -a keys
   (( $+commands[jq] )) && [[ -r $_hey_datadir/info.json ]] &&
@@ -209,6 +226,16 @@ __hey_vars() {
 
 __hey_sync_arg()    { [[ $line[1] == rollback ]] && { __hey_generations; return }; _default }
 __hey_profile_arg() { [[ $line[1] == (rm|diff) ]] && { __hey_generations; return }; return 1 }
+
+# `test nixos SUITE` takes a single suite name; `test hey ARGS` passes its
+# arguments to judge, which takes test files.
+__hey_test_arg() {
+  case $line[1] in
+    (nix|nixos) (( $#line > 2 )) || __hey_test_suites ;;
+    (hey) _files ;;
+    (*) return 1 ;;
+  esac
+}
 
 __hey_dispatch() {
   local curcontext="${curcontext%:*:*}:hey-${words[1]}:"
@@ -246,7 +273,6 @@ __hey_dispatch() {
         '1:command:_command_names -e' \
         '*:: :_default'
       ;;
-    (test) _arguments -C '*:test:_files' ;;
     (get|set)
       _arguments -C \
         '-g[read or write a persistent (global) var]' \

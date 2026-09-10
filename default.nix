@@ -11,12 +11,19 @@ with hey.lib;
     modules = {};
 
     # Creates a simpler, polymorphic alias for users.users.$USER.
-    user = mkOpt attrs { name = ""; };
+    user = mkOption {
+      type =
+        let elemType = options.users.users.type.nestedTypes.elemType;
+        in elemType.substSubModules (elemType.getSubModules ++ [
+             { config.name = mkOverride 500 ""; }
+           ]);
+      default = {};
+    };
   };
 
   config = {
     assertions = [{
-      assertion = config.user ? name;
+      assertion = config.user.name != "";
       message = "config.user.name is not set!";
     }];
 

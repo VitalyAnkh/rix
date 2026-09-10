@@ -313,6 +313,7 @@
    :modules  [:home "modules"]
    :runtime  [|(path/xdg :runtime "hey")]
    :state    [|(path/xdg :state "hey")]
+   :test     [:home "test"]
    :wm       [:config wm]
    :wm*      [|(path/xdg :config) wm]
    :profile  ["/nix/var/nix/profiles/system"]

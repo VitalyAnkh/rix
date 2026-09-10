@@ -25,6 +25,7 @@
 #     modules        {home}/modules
 #     runtime        $XDG_RUNTIME_DIR/hey
 #     state          $XDG_STATE_HOME/hey
+#     test           {home}/test
 #     wm             {config}/$WM
 #     wm*            $XDG_CONFIG_HOME/$WM
 #     profile        The system nix profile.
