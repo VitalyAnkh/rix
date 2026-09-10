@@ -38,6 +38,7 @@ in {
       gromit-mpx     # for drawing on the screen
       wlr-randr      # for monitors that hyprctl can't handle
       wf-recorder    # for screencasting
+      quickshell     # for screencast's region indicator
       slurp          # slop
       grim           # screenshot (hyprshot, dms screenshot, etc)
       swappy         # satty/Snappy/sharex
