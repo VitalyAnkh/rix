@@ -95,7 +95,10 @@ hl.config({
         disable_hyprland_logo = true,
         disable_autoreload = true,
         disable_splash_rendering = true,
-        key_press_enables_dpms = true
+        key_press_enables_dpms = true,
+        -- Open apps in the workspace I launched them from (unless overwritten
+        -- by window rules)
+        initial_workspace_tracking = 2
     },
 
     cursor = {
