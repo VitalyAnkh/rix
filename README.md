@@ -1,5 +1,5 @@
-[![Made with Doom Emacs](https://img.shields.io/badge/Made_with-Doom_Emacs-blueviolet.svg?style=flat-square&logo=GNU%20Emacs&logoColor=white)](https://github.com/doomemacs)
-[![NixOS Unstable](https://img.shields.io/badge/NixOS-24.05-blue.svg?style=flat-square&logo=NixOS&logoColor=white)](https://nixos.org)
+[![Made with Doom Emacs](https://img.shields.io/badge/Made_with-Doom_Emacs-blueviolet.svg?style=flat-square&logo=GNU%20Emacs&logoColor=white)][doomemacs]
+[![NixOS Unstable](https://img.shields.io/badge/NixOS-26.11-blue.svg?style=flat-square&logo=NixOS&logoColor=white)](https://nixos.org)
 
 **Hey,** you. You're finally awake. You were trying to configure your OS
 declaratively, right? Walked right into that NixOS ambush, same as us, and those
@@ -32,7 +32,7 @@ dotfiles over there.
 
 ## Quick start
 
-1. Acquire or build a NixOS 24.05+ image:
+1. Acquire or build a NixOS 26.11+ image:
    ```sh
    # Yoink nixos-unstable from upstream
    $ wget -O nixos.iso https://channels.nixos.org/nixos-unstable/latest-nixos-minimal-x86_64-linux.iso
@@ -205,5 +205,5 @@ COMMANDS:
 
 
 [nixos-discourse]: https://discourse.nixos.org
-[doomemacs]: https://github.com/doomemacs/doomemacs
+[doomemacs]: https://doomemacs.org
 [agenix]: https://github.com/ryantm/agenix
