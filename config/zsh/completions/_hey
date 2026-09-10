@@ -187,6 +187,14 @@ __hey_inputs() {
   (( $#inputs )) && _wanted inputs expl 'flake input' compadd -a inputs
 }
 
+__hey_hey_suites() {
+  local expl root=$_hey_root/test/hey
+  local -a suites
+  suites=( $root/*.janet(N.:t:r) )
+  suites=( ${suites:#_*} )
+  (( $#suites )) && _wanted suites expl 'hey suite' compadd -a suites
+}
+
 # The NixOS suites, named as test/nixos/_lib.nix's collectSuites names them: the
 # path under test/nixos, minus the .nix, with "/" turned into "-". Read off the
 # filesystem, not from `hey test -l`, which evaluates the flake twice and is far
@@ -228,11 +236,11 @@ __hey_sync_arg()    { [[ $line[1] == rollback ]] && { __hey_generations; return 
 __hey_profile_arg() { [[ $line[1] == (rm|diff) ]] && { __hey_generations; return }; return 1 }
 
 # `test nixos SUITE` takes a single suite name; `test hey ARGS` passes its
-# arguments to judge, which takes test files.
+# arguments to judge, which takes suite names or test files.
 __hey_test_arg() {
   case $line[1] in
     (nix|nixos) (( $#line > 2 )) || __hey_test_suites ;;
-    (hey) _files ;;
+    (hey) __hey_hey_suites; _files ;;
     (*) return 1 ;;
   esac
 }

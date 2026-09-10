@@ -1,16 +1,14 @@
 #!/usr/bin/env janet
-# Run the Hey and/or NixOS test suites.
-#
-# A suite name after `nixos` builds that suite alone, which is much faster to
-# iterate on than the whole set:
+# Run one or all of the Hey and/or NixOS test suites.
 #
 # SYNOPSIS:
 #   test [SUITE [ARGS...]]
-#   test [-l|--list]
+#   test [-l|--list] [SUITE]
 #
 # OPTIONS:
-#   -l, --list
-#     List all test suites.
+#   -l [SUITE], --list [SUITE]
+#     List SUITE's test suites, instead of running them. If SUITE is omitted,
+#     list both.
 #
 # ARGUMENTS:
 #   1 SUITE
@@ -22,31 +20,25 @@
 (use hey/cmd)
 (use sh)
 
-# The suites are addressed per-system, and nix has no "current system" in a
-# flake attrpath, so it has to be asked.
-(defn- system []
-  ($<_ nix eval --raw --impure --expr "builtins.currentSystem"))
 
-(defn- check-attr [&opt suite]
-  (string (path :home) "#checks." (system) ".nixos"
-          (if suite (string ".passthru." suite) "")))
+# NixOS suites
 
-(defn- suites []
+(defn- nixos-checks [&opt suite]
+  (string (path :home) "#checks."
+          ($<_ nix eval --raw --impure --expr "builtins.currentSystem")
+          ".nixos" (if suite (string ".passthru." suite) "")))
+
+(defn- nixos-suites []
   (string/split
    "\n"
-   ($<_ nix eval --raw --no-warn-dirty ,(check-attr)
+   ($<_ nix eval --raw --no-warn-dirty ,(nixos-checks)
         --apply "d: builtins.concatStringsSep \"\\n\" (builtins.attrNames d.passthru)")))
-
-(defn- run-hey [args]
-  (echo :g "> Running the Hey suite...")
-  (flush)
-  (do? $? judge ,(path :test "hey") ,;args))
 
 (defn- run-nixos [args]
   (def suite (first args))
   # Checked up front, because nix's own message for a bad attrpath names three
   # attributes that don't exist and never mentions the suite list.
-  (when (and suite (not (index-of suite (suites))))
+  (when (and suite (not (index-of suite (nixos-suites))))
     (abort "Unknown NixOS suite: %s (see hey test -l)" suite))
   (echo :g "> Running the NixOS suite...")
   (flush)
@@ -56,19 +48,41 @@
   #
   # A passing nix build says nothing at all, which next to judge's "N passed"
   # reads like the suite never ran, hence the confirmation.
-  (if (do? $? nix build --no-link --no-warn-dirty ,(check-attr suite))
+  (if (do? $? nix build --no-link --no-warn-dirty ,(nixos-checks suite))
     (do (echo :check (if suite
                        (string "NixOS suite passed: " suite)
                        "NixOS suites passed"))
         true)
     (abort "NixOS suite failed")))
 
+
+# Hey suites (Janet)
+
+# Can't list tests with judge, so a filesystem crawl it is.
+(defn- hey-suites []
+  (sorted (seq [file :in (os/dir (path :test "hey"))
+                     :when (string/has-suffix? ".janet" file)
+                     :when (not (string/has-prefix? "_" file))]
+            (string/no-suffix ".janet" file))))
+
+(defn- run-hey [args]
+  (var suite? false)
+  (def args (let [suites (hey-suites)]
+              (map |(if (index-of $ suites)
+                      (do (set suite? true)
+                        (path :test "hey" (string $ ".janet")))
+                      $)
+                   args)))
+  (echo :g "> Running the Hey suite...")
+  (flush)
+  (do? $? judge ,;(if suite? [] [(path :test "hey")]) ,;args))
+
 (defcmd test [_ suite & args &opts list? [-l --list]]
-  (when list?
-    (echo ;(suites))
-    (break))
   (case* suite
-    nil   (and (run-hey []) (run-nixos []))
-    "hey" (run-hey args)
-    ["nixos" "nix"] (run-nixos args)
+    nil (if list?
+          (do (echo ;(map |(string "hey:" $) (hey-suites)))
+            (echo ;(map |(string "nixos:" $) (nixos-suites))))
+          (and (run-hey []) (run-nixos [])))
+    "hey" (if list? (echo ;(hey-suites)) (run-hey args))
+    ["nixos" "nix"] (if list? (echo ;(nixos-suites)) (run-nixos args))
     (abort "Unknown suite: %s" suite)))
