@@ -228,9 +228,12 @@ in {
           };
           userChrome = ''
             @import "userChrome.colors.css";
-          ${optionalString (cfg.userChrome != "") cfg.userChrome}
+            ${optionalString (cfg.userChrome != "") cfg.userChrome}
           '';
-          userContent = mkIf (cfg.userContent != "") { text = cfg.userContent; };
+          userContent = ''
+            @import "userContent.colors.css";
+            ${optionalString (cfg.userContent != "") cfg.userContent}
+          '';
       in {
         # Use fixed profile names so it can be targeted in themes and scripts
         "${localDir}/profiles.ini".text = ''
@@ -252,11 +255,11 @@ in {
 
         "${localDir}/${cfg.profileName}.default/user.js" = userjs;
         "${localDir}/${cfg.profileName}.default/chrome/userChrome.css".text = userChrome;
-        "${localDir}/${cfg.profileName}.default/chrome/userContent.css" = userContent;
+        "${localDir}/${cfg.profileName}.default/chrome/userContent.css".text = userContent;
 
         "${localDir}/${cfg.profileName}.alt/user.js" = userjs;
         "${localDir}/${cfg.profileName}.alt/chrome/userChrome.css".text = userChrome;
-        "${localDir}/${cfg.profileName}.alt/chrome/userContent.css" = userContent;
+        "${localDir}/${cfg.profileName}.alt/chrome/userContent.css".text = userContent;
       };
   };
 }

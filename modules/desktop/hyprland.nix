@@ -119,11 +119,19 @@ in {
           input_path = "${hey.configDir}/matugen/templates/tmux.conf"
           output_path = "${config.home.configDir}/tmux/dank-colors.conf"
         ''}
-        ${optionalString config.modules.desktop.browsers.librewolf.enable ''
-          [templates.librewolf]
-          input_path = "${hey.configDir}/matugen/templates/librewolf.css"
-          output_path = "${config.home.configDir}/librewolf/librewolf/hlissner.default/chrome/userChrome.colors.css"
-        ''}
+        ${optionalString config.modules.desktop.browsers.librewolf.enable (
+          let profile = config.modules.desktop.browsers.librewolf.profileName;
+              chromeDir = suffix:
+                "${config.home.configDir}/librewolf/librewolf/${profile}.${suffix}/chrome";
+          in concatMapStringsSep "\n" (suffix: ''
+            [templates.librewolf-chrome-${suffix}]
+            input_path = "${hey.configDir}/matugen/templates/librewolf.css"
+            output_path = "${chromeDir suffix}/userChrome.colors.css"
+
+            [templates.librewolf-content-${suffix}]
+            input_path = "${hey.configDir}/matugen/templates/librewolf-content.css"
+            output_path = "${chromeDir suffix}/userContent.colors.css"
+          '') [ "default" "alt" ])}
         ${optionalString config.modules.desktop.apps.rofi.enable ''
           [templates.rofi]
           input_path = "${hey.configDir}/matugen/templates/rofi.rasi"
