@@ -359,6 +359,8 @@ hl.bind("SUPER + CTRL + h",         hl.dsp.focus({ monitor = "l" }))
 hl.bind("SUPER + CTRL + j",         hl.dsp.focus({ monitor = "d" }))
 hl.bind("SUPER + CTRL + k",         hl.dsp.focus({ monitor = "u" }))
 hl.bind("SUPER + CTRL + l",         hl.dsp.focus({ monitor = "r" }))
+-- Cycle between floats and tiles
+hl.bind("SUPER + w", hl.dsp.window.cycle_next({ floating = not hl.get_active_window().floating }))
 
 -- ** Workspaces
 for i = 1, 10 do
