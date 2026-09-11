@@ -107,12 +107,5 @@ in {
         ${concatMapStrings (path: "source '${path}'\n") cfg.envFiles}
       '';
     };
-
-    # Delete zgenom and all its state and rebuild it from scratch.
-    hey.hooks.onReload."80-zsh" = ''
-      rm -frv "$ZGEN_DIR"
-      rm -frv "$XDG_CACHE_HOME"/zsh/*(DN)
-      rm -fv "$ZDOTDIR"/**/*.zwc(D.N)
-    '';
   };
 }
