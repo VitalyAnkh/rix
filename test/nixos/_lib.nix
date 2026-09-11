@@ -6,8 +6,8 @@
 # an attrset in nixpkgs' lib.runTests shape:
 #
 #   { evalConfig, ... }: {
-#     testHyprlandEnablesDesktop = {
-#       expr = (evalConfig [{ modules.desktop.hyprland.enable = true; }]).modules.desktop.enable;
+#     testHyprlandEnablesQt = {
+#       expr = (evalConfig [{ modules.hyprland.enable = true; }]).qt.enable;
 #       expected = true;
 #     };
 #   }

@@ -25,75 +25,76 @@ with builtins;
       ];
     };
 
-    desktop = {
-      hyprland = rec {
-        enable = true;
-        monitors = [
-          { output = "HDMI-A-2";
-            mode = "2560x1440@120";
-            position = "1920x2160";
-            vrr = 2;
-            primary = true; }
-          { output = "DP-2";
-            position = "0x2191"; }
-          { output = "DP-3";
-            position = "4480x2191"; }
-          { output = "HDMI-A-1";
-            mode = "3840x2160@120";
-            position = "1280x0";
-            vrr = 2;
-            disabled = true; }
-        ];
-        extraConfig = ''
-          -- Bind fixed workspaces to external monitors
-          hl.workspace_rule({
-            workspace = "name:right",
-            monitor = "DP-3",
-            default = true,
-            persistent = true,
-            layout = "scrolling"
-          })
-          hl.workspace_rule({
-            workspace = "name:left",
-            monitor = "DP-2",
-            default = true,
-            persistent = true,
-            layout = "scrolling"
-          })
-          hl.workspace_rule({
-            workspace = "name:tv",
-            monitor = "HDMI-A-1",
-            default = true,
-            gaps_out = 4
-          })
+    hyprland = rec {
+      enable = true;
+      monitors = [
+        { output = "HDMI-A-2";
+          mode = "2560x1440@120";
+          position = "1920x2160";
+          vrr = 2;
+          primary = true; }
+        { output = "DP-2";
+          position = "0x2191"; }
+        { output = "DP-3";
+          position = "4480x2191"; }
+        { output = "HDMI-A-1";
+          mode = "3840x2160@120";
+          position = "1280x0";
+          vrr = 2;
+          disabled = true; }
+      ];
+      extraConfig = ''
+        -- Bind fixed workspaces to external monitors
+        hl.workspace_rule({
+          workspace = "name:right",
+          monitor = "DP-3",
+          default = true,
+          persistent = true,
+          layout = "scrolling"
+        })
+        hl.workspace_rule({
+          workspace = "name:left",
+          monitor = "DP-2",
+          default = true,
+          persistent = true,
+          layout = "scrolling"
+        })
+        hl.workspace_rule({
+          workspace = "name:tv",
+          monitor = "HDMI-A-1",
+          default = true,
+          gaps_out = 4
+        })
 
-          -- Scroll by holding down a side button, because the wheel is broken
-          hl.device({
-            name = "mosart-semi.-2.4g-wireless-mouse",
-            scroll_method = "on_button_down",
-            scroll_button = 276
-          })
+        -- Scroll by holding down a side button, because the wheel is broken
+        hl.device({
+          name = "mosart-semi.-2.4g-wireless-mouse",
+          scroll_method = "on_button_down",
+          scroll_button = 276
+        })
 
-          hl.config({
-            -- To address 1px overscan on my U2724D's
-            general = {
-              gaps_out = { top = 0, left = 0, right = 1, bottom = 0 }
-            }
-          })
-        '';
-      };
+        hl.config({
+          -- To address 1px overscan on my U2724D's
+          general = {
+            gaps_out = { top = 0, left = 0, right = 1, bottom = 0 }
+          }
+        })
+      '';
+    };
+
+    apps = {
       term.default = "foot";
       term.foot.enable = true;
 
       ## Extra
-      apps.rofi.enable = true;
-      apps.thunar.enable = true;
-      apps.libreoffice.enable = true;
-      apps.steam = {
+      rofi.enable = true;
+      thunar.enable = true;
+      libreoffice.enable = true;
+      steam = {
         enable = true;
         libraryDir = "/media/windows/Program Files (x86)/Steam";
       };
-      apps.godot.enable = true;
+      godot.enable = true;
 
       browsers.default = "librewolf";
       browsers.librewolf.enable = true;
@@ -115,6 +116,7 @@ with builtins;
     };
     shell = {
       # vaultwarden.enable = true;
+      claude.enable = true;
       direnv.enable = true;
       git.enable = true;
       gnupg.enable = true;
@@ -170,6 +172,9 @@ with builtins;
     # suspended the system so I'll press the power button thinking I'm waking it
     # up, only to initiate shutdown, so no-op the power button.
     services.logind.settings.Login.HandlePowerKey = "ignore";
+
+    # For the Steam controller and (later) the Steam Frame.
+    # hardware.steam-hardware.enable = true;
 
     fileSystems = {
       "/" = {

@@ -25,29 +25,30 @@ with builtins;
       ];
     };
 
-    desktop = {
-      hyprland = {
-        enable = true;
-        monitors = [
-          { output = "DP-1";
-            mode = "1920x1080@60";
-            position = "0x0";
-            primary = true; }
-          { output = "HDMI-A-1";
-            mode = "1920x1080@75";
-            position = "1920x0"; }
-        ];
-      };
+    hyprland = {
+      enable = true;
+      monitors = [
+        { output = "DP-1";
+          mode = "1920x1080@60";
+          position = "0x0";
+          primary = true; }
+        { output = "HDMI-A-1";
+          mode = "1920x1080@75";
+          position = "1920x0"; }
+      ];
+    };
+
+    apps = {
       term.default = "foot";
       term.foot.enable = true;
 
-      apps.rofi.enable = true;
-      apps.steam = {
+      rofi.enable = true;
+      steam = {
         enable = true;
         libraryDir = "/media/games/SteamLibrary";
       };
-      apps.libreoffice.enable = true;
-      apps.godot.enable = true;
+      libreoffice.enable = true;
+      godot.enable = true;
       browsers.default = "librewolf";
       browsers.librewolf.enable = true;
       media.cad.enable = true;

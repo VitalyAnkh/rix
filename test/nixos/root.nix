@@ -43,7 +43,7 @@ in {
   testConfigUserAggregatesLists = {
     expr =
       let c = evalConfig [{
-            modules.desktop.hyprland.enable = true;   # adds "input"
+            modules.hyprland.enable = true;   # adds "input"
             modules.profiles.hardware = [ "audio" ];  # adds "audio"
           }];
       in {
@@ -61,7 +61,7 @@ in {
   testConfigUserAggregatesPackages = {
     expr =
       let c = evalConfig [{
-            modules.desktop.term.foot.enable = true;  # adds foot, libsixel
+            modules.apps.term.foot.enable = true;  # adds foot, libsixel
             modules.editors.vim.enable = true;
           }];
           names = map (p: p.pname or p.name) c.user.packages;

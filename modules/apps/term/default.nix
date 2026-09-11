@@ -1,0 +1,16 @@
+{ hey, lib, config, options, pkgs, ... }:
+
+with lib;
+with hey.lib;
+let cfg = config.modules.apps.term;
+in {
+  options.modules.apps.term = {
+    default = mkOpt types.str "xterm";
+  };
+
+  config = {
+    services.xserver.desktopManager.xterm.enable = mkDefault (cfg.default == "xterm");
+
+    environment.sessionVariables.TERMINAL = cfg.default;
+  };
+}

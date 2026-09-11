@@ -20,7 +20,7 @@ in {
   config = mkIf cfg.enable {
     assertions = [
       {
-        assertion = config.modules.desktop.enable;
+        assertion = config.modules.hyprland.enable;
         message = "wlsunset requires a desktop environment";
       }
       {

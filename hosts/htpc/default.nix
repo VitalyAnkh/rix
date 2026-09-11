@@ -27,22 +27,23 @@ with builtins;
       ];
     };
 
-    desktop = {
-      hyprland = rec {
-        enable = true;
-        monitors = [
-          { output = "HDMI-A-2";
-            mode = "3840x2160@120";
-            primary = true; }
-        ];
-      };
+    hyprland = rec {
+      enable = true;
+      monitors = [
+        { output = "HDMI-A-2";
+          mode = "3840x2160@120";
+          primary = true; }
+      ];
+    };
+
+    apps = {
       term.default = "foot";
       term.foot.enable = true;
 
       ## Extra
-      apps.rofi.enable = true;
-      apps.thunar.enable = true;
-      apps.steam.enable = true;
+      rofi.enable = true;
+      thunar.enable = true;
+      steam.enable = true;
 
       browsers.default = "librewolf";
       browsers.librewolf.enable = true;

@@ -9,7 +9,7 @@
 #   Display a notification indicating the status of gamemode. This ought to be
 #   triggered by gamemode's start/end hooks.
 #
-#   @see modules/desktop/apps/steam.nix.
+#   @see modules/apps/steam.nix.
 
 case $1 in
   on)

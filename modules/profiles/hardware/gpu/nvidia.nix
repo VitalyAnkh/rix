@@ -81,7 +81,7 @@ in mkIf (any (s: hasPrefix "gpu/nvidia" s) hardware) (mkMerge [
     };
   })
 
-  (mkIf config.modules.desktop.enable {
+  (mkIf config.modules.hyprland.enable {
     # see NixOS/nixos-hardware#348
     # TODO: Try these!
     environment.systemPackages = with pkgs; [
