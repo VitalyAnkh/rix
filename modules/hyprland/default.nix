@@ -102,11 +102,6 @@ in {
       ];
     };
 
-    # Improves latency and reduces stuttering in high load scenarios
-    security.pam.loginLimits = [
-      { domain = "@users"; item = "rtprio"; type = "-"; value = 1; }
-    ];
-
     user.extraGroups = [ "input" ];   # For DMS Screenkey plugin
 
     ## So DMS+Matugen can theme QT apps
