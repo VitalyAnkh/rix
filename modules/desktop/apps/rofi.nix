@@ -79,19 +79,6 @@ in {
       ];
     })
 
-    (mkIf config.modules.shell.vaultwarden.enable {
-      user.packages = [
-        (mkLauncherEntry "Password Manager" {
-          icon = "changes-prevent";
-          exec = "hey @rofi vaultmenu";
-        })
-        (mkLauncherEntry "Password Manager: resume from last time" {
-          icon = "changes-prevent";
-          exec = "hey @rofi vaultmenu -l";
-        })
-      ];
-    })
-
     (mkIf config.services.udisks2.enable {
       user.packages = [
         (mkLauncherEntry "Mount/unmount Devices ->" {
