@@ -191,6 +191,8 @@ hl.workspace_rule({
 
 -- no going idle if something is fullscreened
 hl.window_rule({ match={ fullscreen = true }, idle_inhibit = "fullscreen" })
+-- No floats should be fullscreening/maximizing themselves
+hl.window_rule({ match={ float = true }, suppress_event = "fullscreen maximize" })
 
 -- In multi-monitor setups where some displays are smaller than others, file
 -- dialogs can "remember" their last size in larger monitors and be maximized
@@ -198,7 +200,6 @@ hl.window_rule({ match={ fullscreen = true }, idle_inhibit = "fullscreen" })
 hl.window_rule({
     name = "dialog-windows",
     match = { float = true, class = "^(xdg-desktop-portal-gtk|librewolf)" },
-    suppress_event = "fullscreen maximize",
     center = true,
     max_size = { "monitor_w*0.9", "monitor_h*0.9" }
 })
@@ -211,7 +212,6 @@ hl.window_rule({ match={ class = "^swappy$" }, dim_around = true }) -- see confi
 
 hl.window_rule({ -- see config/hypr/bin/screendraw.zsh
     match = { class = "^Gromit-mpx$" },
-    suppress_event = "fullscreen maximize",
     float = true,
     no_blur = true,
     no_max_size = true,
@@ -242,7 +242,6 @@ hl.window_rule({
 hl.window_rule({
     name = "steam-popups",
     match = { class = "steam", initial_title = "negative:Steam" },
-    suppress_event = "fullscreen maximize",
     float = true,
     center = true
 })
