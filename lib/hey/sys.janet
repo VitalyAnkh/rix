@@ -7,10 +7,11 @@
                                 ".ogg" ".wav" ".mp3")]
     (os/spawn ["play" "-q" ;(opts "-v" volume) file] :pd)))
 
-(defn notify [message &named urgency title icon sound]
+(defn notify [message &named urgency title icon sound id]
   (os/spawn ["notify-send"
              ;(opts "-i" icon)
              ;(opts "-u" urgency)
+             ;(opts "-r" id)
              ;(if title
                 [title message]
                 [message])]
