@@ -16,6 +16,11 @@ in {
 
   config = mkIf cfg.enable (mkMerge [
     {
+      modules.desktop.matugen.templates.rofi = {
+        input_path = "${hey.configDir}/matugen/templates/rofi.rasi";
+        output_path = "${config.home.configDir}/rofi/themes/dank-colors.rasi";
+      };
+
       home.configFile."rofi" = {
         source = "${hey.configDir}/rofi";
         recursive = true;

@@ -83,6 +83,11 @@ in {
       };
     };
 
+    modules.desktop.matugen.templates.hyprland = {
+      input_path = "${hey.configDir}/matugen/templates/hyprland.lua";
+      output_path = "${config.home.configDir}/hypr/hyprland-colors.lua";
+    };
+
     hey = {
       info = {
         hypr = {
@@ -97,51 +102,10 @@ in {
     };
 
     home.configFile = {
-      "matugen/templates".source = "${hey.configDir}/matugen/templates";
-
       # If DMS is launched vya systemd, it won't see the profile envvars, so...
       "environment.d/90-dms.conf".text = ''
         QT_QPA_PLATFORMTHEME = "qt5ct";
         QT_QPA_PLATFORMTHEME_QT6 = "qt6ct";
-      '';
-
-      "matugen/config.toml".text = ''
-        [config]
-        version_check = false
-        import_json_files = ["${config.home.dataDir}/hey/info.json"]
-
-        [templates.hyprland]
-        input_path = "${hey.configDir}/matugen/templates/hyprland.lua"
-        output_path = "${config.home.configDir}/hypr/hyprland-colors.lua"
-
-        ${optionalString config.modules.shell.tmux.enable ''
-          [templates.tmux]
-          input_path = "${hey.configDir}/matugen/templates/tmux.conf"
-          output_path = "${config.home.configDir}/tmux/dank-colors.conf"
-        ''}
-        ${optionalString config.modules.desktop.browsers.librewolf.enable (
-          let profile = config.modules.desktop.browsers.librewolf.profileName;
-              chromeDir = suffix:
-                "${config.home.configDir}/librewolf/librewolf/${profile}.${suffix}/chrome";
-          in concatMapStringsSep "\n" (suffix: ''
-            [templates.librewolf-chrome-${suffix}]
-            input_path = "${hey.configDir}/matugen/templates/librewolf.css"
-            output_path = "${chromeDir suffix}/userChrome.colors.css"
-
-            [templates.librewolf-content-${suffix}]
-            input_path = "${hey.configDir}/matugen/templates/librewolf-content.css"
-            output_path = "${chromeDir suffix}/userContent.colors.css"
-          '') [ "default" "alt" ])}
-        ${optionalString config.modules.desktop.apps.rofi.enable ''
-          [templates.rofi]
-          input_path = "${hey.configDir}/matugen/templates/rofi.rasi"
-          output_path = "${config.home.configDir}/rofi/themes/dank-colors.rasi"
-        ''}
-        ${optionalString config.modules.desktop.term.foot.enable ''
-          [templates.foot]
-          input_path = "${hey.configDir}/matugen/templates/foot.ini"
-          output_path = "${config.home.configDir}/foot/dank-colors.ini"
-        ''}
       '';
 
       "swappy" = {

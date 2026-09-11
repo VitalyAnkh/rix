@@ -128,6 +128,20 @@ in {
         '') prefs);
     };
 
+    # These are imported from userChrome.css & userContent.css (further below)
+    modules.desktop.matugen.templates = listToAttrs (concatMap
+      (profile: let chromeDir = "${config.home.configDir}/librewolf/librewolf/${cfg.profileName}.${profile}/chrome";
+      in [
+        (nameValuePair "librewolf-chrome-${profile}" {
+          input_path = "${hey.configDir}/matugen/templates/librewolf.css";
+          output_path = "${chromeDir}/userChrome.colors.css";
+        })
+        (nameValuePair "librewolf-content-${profile}" {
+          input_path = "${hey.configDir}/matugen/templates/librewolf-content.css";
+          output_path = "${chromeDir}/userContent.colors.css";
+        })
+      ]) [ "default" "alt" ]);
+
     home.configFile =
       let localDir = "librewolf/librewolf";
           userjs = mkIf (cfg.settings != {} || cfg.extraConfig != "") {
