@@ -100,11 +100,14 @@
 (defmacro with ([sym & plist] & body)
   ~(,call (fn [,sym] ,;body) ,;plist))
 
+(defn notice
+  "Display MESSAGE in a Rofi dialog. MESSAGE supports Pango markup."
+  [message & args]
+  (os/spawn ["rofi" "-markup" "-e" (fmt message ;args)] :pd))
+
 (defn error [message & args]
-  (os/spawn ["rofi" "-markup" "-e"
-             (string "<b>Uncaught error:</b>\n\n"
-                     (escape (fmt message ;args)))]
-            :pd)
+  "Display MESSAGE in a Rofi dialog as an error. MESSAGE supports Pango markup."
+  (notice "<b>Uncaught error:</b>\n\n%s" (escape (fmt message ;args)))
   (errorf message ;args))
 
 (defmacro chain [[sym & plist] & body]
