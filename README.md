@@ -1,3 +1,4 @@
+[![Tests](https://img.shields.io/github/actions/workflow/status/hlissner/dotfiles/test.yml?branch=master&style=flat-square&label=hey%20test&logo=GitHub&logoColor=white)](https://github.com/hlissner/dotfiles/actions/workflows/test.yml)
 [![Made with Doom Emacs](https://img.shields.io/badge/Made_with-Doom_Emacs-blueviolet.svg?style=flat-square&logo=GNU%20Emacs&logoColor=white)][doomemacs]
 [![NixOS Unstable](https://img.shields.io/badge/NixOS-26.11-blue.svg?style=flat-square&logo=NixOS&logoColor=white)](https://nixos.org)
 
