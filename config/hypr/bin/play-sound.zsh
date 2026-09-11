@@ -2,16 +2,18 @@
 # Plays a notification sound.
 #
 # SYNOPSIS:
-#   play-sound [-v VOLUME] NAME
+#   play-sound [-v VOLUME] [-w] NAME
 #   play-sound ls
 #
 # DESCRIPTION:
 #   NAME is the basename of an .ogg, .wav or .mp3 file in `hey path assets
-#   sounds`. Note that -v must follow NAME, not precede it.
+#   sounds`.
 #
 # OPTIONS:
 #   -v VOLUME
 #     Play at VOLUME rather than the default.
+#   -w
+#     Block until the sound is done playing.
 #
 # ARGUMENTS:
 #   1 NAME
@@ -27,11 +29,15 @@ if [[ "$1" == "ls" ]]; then
   ls -l "$dir"
 else
   hey.requires play
-  zparseopts -E -D -F -- v:=volume || exit 1
+  zparseopts -E -D -F -- v:=volume w=wait || exit 1
   local file=$(echo "$dir"/$1.{ogg,wav,mp3}(-.N[1]))
   if [[ -z $file ]]; then
     hey.error "Unrecognized sound: $1"
     exit 1
   fi
-  hey.do play -q $volume $file &
+  if [[ $wait ]]; then
+    hey.do play -q $volume $file
+  else
+    hey.do play -q $volume $file &
+  fi
 fi

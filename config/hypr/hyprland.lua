@@ -12,7 +12,7 @@ hl.on("hyprland.start", function ()
 end)
 
 hl.on("hyprland.shutdown", function ()
-    os.execute("hey hook onShutdown && sleep 1")
+    os.execute("hey hook onShutdown")
 end)
 
 

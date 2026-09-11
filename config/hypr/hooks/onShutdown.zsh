@@ -8,4 +8,4 @@
 #   Triggered by NixOS while shutting down..
 
 dms ipc toast info "Powering off..."
-hey .play-sound shutdown
+hey .play-sound -w shutdown
