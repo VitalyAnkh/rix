@@ -4,8 +4,14 @@
 (use sh)
 (import hey)
 
+# Ensure zsh helpers are available to these tests.
+(def- autoload-hey
+  (let [dir (hey/path :lib "zsh")]
+    (string "fpath=( " dir " ); autoload -Uz ${fpath[1]}/hey.*(.:t); \"$@\"")))
+
 (defmacro zsh [& args]
-  ~(,(first args) zsh ,(hey/path :lib "zsh" (get args 1)) ,;(slice args 2)))
+  ~(,(first args) zsh -c ,autoload-hey "hey-test"
+    ,(string (get args 1)) ,;(slice args 2)))
 
 (deftest hey.requires
   (def null (file/open "/dev/null"))
