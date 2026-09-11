@@ -11,8 +11,8 @@
 #   hey wm|host CMD        -- scripts in {config/$WM,hosts/$HOST}/bin
 #   hey @FOO CMD           -- scripts in config/FOO/bin
 #   hey .FOO               -- scripts in hosts/$HOST/bin, config/$WM/bin, or bin/
-#   hey hook HOOK          -- hooks in {$XDG_CONFIG_HOME/$WM,config/$WM,hosts/$HOST}/hooks
-#                             and $XDG_DATA_HOME/hey/hooks.d
+#   hey hook [@AREA] HOOK  -- hooks in {$XDG_CONFIG_HOME/$AREA,config/$AREA}/hooks,
+#                             hosts/$HOST/hooks and $XDG_DATA_HOME/hey/hooks.d
 #
 # Script directories nest: a NAME.d (or NAME/) directory beside NAME is
 # descended into, exactly like lib/hey/init.janet's resolve-1.
@@ -134,27 +134,63 @@ __hey_commands() {
     _wanted directories expl 'config directory' compadd -a dirs
 }
 
+# The areas a hook can be scoped to, as bin/hey.d/hook.janet's areas sees them.
+# Bare after an @, sigil-prefixed otherwise, so they can share a menu with the
+# hook names.
+__hey_hook_areas() {
+  local -a areas=( $_hey_hookareas )
+  (( $#areas )) || return 1
+  compset -P '@' || areas=( ${areas/#/@} )
+  _describe -t areas 'hook area' areas
+}
+
+# With no AREA, offers every area's hooks plus the areas themselves. AREA "host"
+# has no live counterpart under $XDG_CONFIG_HOME, matching area-dirs.
 __hey_hooks() {
+  local area=${1-} name ret=1
   local -a dirs extra known found _hey_reply
 
-  dirs=(
-    ${_hey_wm:+${XDG_CONFIG_HOME:-$HOME/.config}/$_hey_wm/hooks}
-    ${_hey_wm:+$_hey_root/config/$_hey_wm/hooks}
-    $_hey_root/hosts/$_hey_host/hooks
-  )
+  [[ -z $area && $PREFIX == @* ]] && { __hey_hook_areas; return }
+
+  for name in ${area:-$_hey_hookareas}; do
+    if [[ $name == host ]]; then
+      dirs+=( $_hey_root/hosts/$_hey_host/hooks )
+    else
+      dirs+=(
+        ${XDG_CONFIG_HOME:-$HOME/.config}/$name/hooks
+        $_hey_root/config/$name/hooks
+      )
+    fi
+  done
   __hey_scan $dirs
   # all runs for every hook, taking --HOOK; it is not a hook of its own
   _hey_reply=( ${_hey_reply:#all:*} )
 
   # Third parties (like nixos modules) can drop extra handlers in
-  # $XDG_DATA_HOME/hey/hooks.d/HOOK.d/.
-  found=( $_hey_datadir/hooks.d/*.d(N/:t) )
-  extra=( ${found%.d} )
-  known=( ${(@)_hey_reply%%:*} )
-  extra=( ${extra:|known} )
+  # $XDG_DATA_HOME/hey/hooks.d/HOOK.d/. They belong to no area, so they drop out
+  # of a scoped menu, exactly as hook.janet drops them from a scoped run.
+  if [[ -z $area ]]; then
+    found=( $_hey_datadir/hooks.d/*.d(N/:t) )
+    extra=( ${found%.d} )
+    known=( ${(@)_hey_reply%%:*} )
+    extra=( ${extra:|known} )
+  fi
 
-  (( $#_hey_reply || $#extra )) || return 1
-  _describe -t hooks 'hook' _hey_reply -- extra
+  (( $#_hey_reply || $#extra )) &&
+    { _describe -t hooks 'hook' _hey_reply -- extra && ret=0 }
+  [[ -n $area ]] || { __hey_hook_areas && ret=0 }
+  return ret
+}
+
+# hook takes an optional leading @AREA, which _arguments has no way to express
+# as a positional. When position 1 swallowed one, the hook name lands here
+# instead, as the first of the rest arguments.
+__hey_hook_arg() {
+  if [[ $CURRENT == 1 && $line[1] == @?* ]]; then
+    __hey_hooks ${line[1]#@}
+  else
+    _default
+  fi
 }
 
 __hey_path_segment() {
@@ -312,6 +348,8 @@ _hey() {
     $_hey_root/bin
   )
   local -a _hey_cfgdirs=( $_hey_root/config/*/bin(N-/:h:t) )
+  # host is always an area; it names hosts/$HOST/hooks, which needn't exist.
+  local -a _hey_hookareas=( $_hey_root/config/*/hooks(N-/:h:t) host )
 
   # hey's own flags come from bin/hey's header, like every other command's. By
   # absolute path, not `.hey`, which would resolve through the search path and

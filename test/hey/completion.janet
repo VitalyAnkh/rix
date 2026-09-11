@@ -29,9 +29,26 @@
   (test (offers? out "rollback:") true)
 
   (deftest "A command with no documented arguments offers nothing"
-    # reload.janet has no arguments documented, so treat it as "takes no
+    # ops.janet has no arguments documented, so treat it as "takes no
     # arguments", rather than "something went wrong"
-    (test (complete "dispatch" "reload" "") @[])))
+    (test (complete "dispatch" "ops" "") @[])))
+
+(deftest completion/hook-areas
+  (deftest "The menu carries the sigil, so areas and hooks can share it"
+    (test (complete "areas" "") @["DESC[areas] @alpha @beta @host"]))
+
+  (deftest "Past the sigil, the areas are bare"
+    (test (complete "areas" "@") @["DESC[areas] alpha beta host"]))
+
+  (deftest "A consumed @AREA leaves the hook name to the rest arguments"
+    (test (complete "hookarg" "@alpha") @["HOOKS alpha"])
+    (test (complete "hookarg" "onReload") @["DEFAULT"])
+    # Only the first of the rest arguments is a hook; the rest belong to it.
+    (test (complete "hookarg" "@alpha" "2") @["DEFAULT"]))
+
+  (deftest "reload forwards an area, so it completes them"
+    (def out (complete "dispatch" "reload" ""))
+    (test (offers? out "__hey_hook_areas") true)))
 
 (deftest completion/paths-are-not-dot-commands
   (test (complete "dispatch" "./foo" "") @["DEFAULT"])

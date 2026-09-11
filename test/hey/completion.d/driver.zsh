@@ -34,11 +34,20 @@ local _hey_wm=testwm
 local _hey_datadir=$root/test/hey/completion.d/data
 local -a _hey_bindirs=( $root/test/hey/completion.d/bin )
 local -a _hey_cfgdirs=( alpha beta )
+local -a _hey_hookareas=( alpha beta host )
 
 words=( "$@" ); CURRENT=$(( $#words + 1 )); PREFIX=""; SUFFIX=""; line=( "$@" )
 case $case in
   (dispatch) __hey_dispatch ;;
   (menu) PREFIX=${1-}; __hey_commands ;;
+  (areas) PREFIX=${1-}; __hey_hook_areas ;;
+  # __hey_hook_arg reads the positional that _arguments already consumed out of
+  # $line, and $CURRENT as *:: leaves it: 1 for the first of the rest arguments.
+  (hookarg)
+    __hey_hooks() { print -r -- "HOOKS ${(j: :)@}" }
+    line=( ${1-} ); CURRENT=${2:-1}
+    __hey_hook_arg
+    ;;
   # Record what __hey_scriptdir reconstructs for `hey help --dump`, rather than
   # running hey.
   (reconstruct)
