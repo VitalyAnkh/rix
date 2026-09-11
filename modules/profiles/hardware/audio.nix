@@ -27,38 +27,9 @@ mkMerge [
       # gapplication service.
       at-spi2-core
     ];
-    # systemd.user.services.easyeffects = {
-    #   wantedBy = [ "graphical-session.target" ];
-    #   unitConfig = {
-    #     Description = "Easyeffects daemon";
-    #     Requires = [ "dbus.service" ];
-    #     After = [ "graphical-session-pre.target" ];
-    #     PartOf = [ "graphical-session.target" "pipewire.service" ];
-    #   };
-    #   serviceConfig = {
-    #     ExecStart = "${pkgs.easyeffects}/bin/easyeffects --gapplication-service";
-    #     ExecStop = "${pkgs.easyeffects}/bin/easyeffects --quit";
-    #     Restart = "on-failure";
-    #     RestartSec = 5;
-    #   };
-    # };
 
     # Disable Pulseaudio because Pipewire is used.
     services.pulseaudio.enable = lib.mkForce false;
-
-    # HACK: Prevent ~/.esd_auth files by disabling the esound protocol module
-    #   for pulseaudio, which I likely don't need. Is there a better way?
-    # services.pulseaudio.configFile =
-    #   let inherit (pkgs) runCommand pulseaudio;
-    #       paConfigFile =
-    #         runCommand "disablePulseaudioEsoundModule"
-    #           { buildInputs = [ pulseaudio ]; } ''
-    #             mkdir "$out"
-    #             cp ${pulseaudio}/etc/pulse/default.pa "$out/default.pa"
-    #             sed -i -e 's|load-module module-esound-protocol-unix|# ...|' "$out/default.pa"
-    #           '';
-    #   in mkIf config.services.pulseaudio.enable
-    #     "${paConfigFile}/default.pa";
   })
 
   (mkIf (elem "audio/realtime" config.modules.profiles.hardware) {
