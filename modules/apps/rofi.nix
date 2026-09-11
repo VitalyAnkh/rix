@@ -17,8 +17,8 @@ in {
   config = mkIf cfg.enable (mkMerge [
     {
       modules.hyprland.matugen.templates.rofi = {
-        input_path = "${hey.configDir}/matugen/templates/rofi.rasi";
-        output_path = "${config.home.configDir}/rofi/themes/dank-colors.rasi";
+        input_path = "${hey.configDir}/rofi/colors.template.rasi";
+        output_path = "${config.home.configDir}/rofi/themes/colors.rasi";
       };
 
       home.configFile."rofi" = {

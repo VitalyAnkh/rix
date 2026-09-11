@@ -152,19 +152,34 @@ in {
   };
 
   testFootRegistersItsTemplate = {
-    expr = hasInfix ''output_path = "/home/test/.config/foot/dank-colors.ini"'' (matugen [{
+    expr = hasInfix ''output_path = "/home/test/.config/foot/colors.ini"'' (matugen [{
       modules.apps.term.foot.enable = true;
     }]);
     expected = true;
   };
 
-  # ghostty/config has sourced ?config.theme since it was written, but the
-  # template was never registered, so the file was never generated.
   testGhosttyRegistersItsTemplate = {
-    expr = hasInfix ''output_path = "/home/test/.config/ghostty/config.theme"'' (matugen [{
+    expr = hasInfix ''output_path = "/home/test/.config/ghostty/themes/dank"'' (matugen [{
       modules.apps.term.ghostty.enable = true;
     }]);
     expected = true;
+  };
+
+  # matugen skips an input_path that isn't there without complaint, so these get
+  # checked against the filesystem rather than against each other.
+  testEveryRegisteredTemplateInputExists = {
+    expr =
+      let templates = (evalConfig [{
+            modules.shell.tmux.enable = true;
+            modules.apps.rofi.enable = true;
+            modules.apps.term.foot.enable = true;
+            modules.apps.term.ghostty.enable = true;
+            modules.apps.browsers.librewolf.enable = true;
+            modules.hyprland.enable = true;
+          }]).modules.hyprland.matugen.templates;
+      in filter (name: !(builtins.pathExists templates.${name}.input_path))
+                (attrNames templates);
+    expected = [];
   };
 
   ## LibreWolf, which is the only module contributing more than one template.

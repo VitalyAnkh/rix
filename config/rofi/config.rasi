@@ -194,4 +194,4 @@ icon, icon-current-entry, prompt, num-filtered-rows {
 }
 
 /* Import nix-generated files */
-@import "dank-colors.rasi"
+@import "colors.rasi"

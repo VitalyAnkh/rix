@@ -27,8 +27,8 @@ in {
     '';
 
     modules.hyprland.matugen.templates.tmux = {
-      input_path = "${hey.configDir}/matugen/templates/tmux.conf";
-      output_path = "${config.home.configDir}/tmux/dank-colors.conf";
+      input_path = "${hey.configDir}/tmux/colors.template.conf";
+      output_path = "${config.home.configDir}/tmux/colors.conf";
     };
 
     home.configFile."tmux" = {
