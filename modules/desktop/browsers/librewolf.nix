@@ -43,7 +43,10 @@ in {
     ];
 
     # Treat LibreWolf as our default PDF reader
-    xdg.mime.defaultApplications."application/pdf" = "librewolf.desktop";
+    xdg.mime = {
+      defaultApplications."application/pdf" = "librewolf.desktop";
+      addedAssociations."application/pdf" = "librewolf.desktop";
+    };
 
     programs.firefox = {
       enable = true;
