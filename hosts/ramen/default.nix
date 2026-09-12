@@ -32,9 +32,6 @@ with builtins;
       enable = true;
       monitors = [ { output = "eDP-1"; primary = true; } ];
       extraConfig = ''
-        hl.workspace_rule({ workspace = "special:term", gaps_out = 100, on_created_empty = "hey .scratch term" })
-        hl.workspace_rule({ workspace = "special:pad", gaps_in = 3, gaps_out = { top = 40, left = 80, bottom = 40, right = 80 }})
-
         -- trigger when the lid is up
         -- hl.bind("switch:off:Lid Switch", hl.dsp.dpms({ action = "disable" }))
         -- trigger when the lid is down

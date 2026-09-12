@@ -109,7 +109,7 @@ hl.config({
     },
 
     scrolling = {
-        fullscreen_on_one_column = true
+        fullscreen_on_one_column = false
     },
 })
 
@@ -177,9 +177,10 @@ end
 
 hl.workspace_rule({
     workspace = "special:term",
-    gaps_in = 6,
-    gaps_out = 15,
-    on_created_empty = "[float] hey .scratch term"
+    gaps_in = 15,
+    gaps_out = 80,
+    layout = "scrolling",
+    on_created_empty = "hey .scratch term"
 })
 hl.workspace_rule({
     workspace = "special:pad",
@@ -370,7 +371,7 @@ for i = 1, 10 do
 end
 
 -- Quick-resize windows
-for i, spec in ipairs({ 640, 0.4, 0.5, 0.6, 0.7, 0.8 }) do
+for i, spec in ipairs({ 640, 0.4, 0.5, 0.6, 0.8, 1.0 }) do
   hl.bind("SUPER + CTRL + " .. i, my.dsp.resize_width_to(spec))
 end
 
