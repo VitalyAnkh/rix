@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(**/*.age)",
+      "Edit(**/*.age)",
+      "Read(**/*.bean)",
+      "Edit(**/*.bean)"
+    ]
+  }
+}
