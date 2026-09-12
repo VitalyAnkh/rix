@@ -106,13 +106,13 @@ in {
       # $HOME (like Documents or Videos). War. War never changes.
       home.configFile."user-dirs.dirs".text = ''
         XDG_DESKTOP_DIR="${home.fakeDir}/Desktop"
-        XDG_DOCUMENTS_DIR="${home.fakeDir}/Documents"
-        XDG_DOWNLOAD_DIR="${home.fakeDir}/Downloads"
-        XDG_MUSIC_DIR="${home.fakeDir}/Music"
-        XDG_PICTURES_DIR="${home.fakeDir}/Pictures"
+        XDG_DOCUMENTS_DIR="${home.dir}"
+        XDG_DOWNLOAD_DIR="${home.dir}/downloads"
+        XDG_MUSIC_DIR="${home.dir}"
+        XDG_PICTURES_DIR="${home.dir}"
         XDG_PUBLICSHARE_DIR="${home.fakeDir}/Share"
         XDG_TEMPLATES_DIR="${home.fakeDir}/Templates"
-        XDG_VIDEOS_DIR="${home.fakeDir}/Videos"
+        XDG_VIDEOS_DIR="${home.dir}"
       '';
 
       # Auto-create XDG directories, ensure correct permissions, and generate a
