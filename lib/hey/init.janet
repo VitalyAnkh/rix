@@ -20,7 +20,6 @@
      (setdyn :exit-handled true)
      (os/sigaction :int (partial ,on-exit :int) true)
      (os/sigaction :term (partial ,on-exit :term) true)
-     (os/sigaction :kill (partial ,on-exit :kill) true)
      # os/exit evades all these signal handlers, as well as defer, so as long as
      # downstream promises to avoid os/exit (and use our exit instead), this
      # won't be an issue.
@@ -86,24 +85,63 @@
 (defn resolve-dir [base & args]
   (resolve-1 :directory base ;args))
 
+(defn- find-rule
+  "Return the [pattern destination] pair in RULES that COMMAND matches, if any."
+  [rules command args]
+  (find (fn [[pat _]]
+          (case (type pat)
+            :function (pat command ;args)
+            :keyword  (= pat (keyword command))
+            :string   (= pat command)
+            :tuple    (if (keyword? (first pat))
+                        (index-of (keyword command) pat)
+                        (peg/match pat command))
+            (abort "Invalid rule pattern: %q" pat)))
+        (rule-pairs rules)))
+
+(defn- rule-fallback
+  ``Return the destination RULES ends with when nothing matches, if it has one.
+  A bare string fallback becomes an exec of that command plus the arguments.``
+  [rules]
+  (when (odd? (length rules))
+    (if (string? (last rules))
+      |[:exec (last rules) ;$&]
+      (last rules))))
+
+(defn- eval-dispatcher
+  "Build the op handler for a rule that resolves to Janet code."
+  [command spec]
+  (unless (> (length spec) 1)
+    (errorf "Invalid eval dispatcher for: %s" command))
+  (let [f (in spec 1)
+        cargs (slice spec 2)]
+    (fn [op]
+      (let [{:cmd cmd :file file}
+            (if (struct? f) f {:cmd f :file (dyn :script)})]
+        (case op
+          :which (echo (string/join [file ;cargs] " "))
+          :help  (help [file ;cargs])
+          :dump  (print-specs (if (struct? f) file))
+          :call  (cmd command ;cargs))))))
+
+(defn- exec-dispatcher
+  "Build the op handler for a rule that resolves to a script on disk."
+  [command spec]
+  (let [sargs (slice spec 1)
+        pargs (unless (empty? sargs) (resolve ;sargs))]
+    (unless pargs
+      (abort "Unknown command: %q" command))
+    (fn [op]
+      (case op
+        :which (echo (string/join pargs " "))
+        :help  (help pargs)
+        :dump  (print-specs (first pargs))
+        :call  (os/execute pargs :p)))))
+
 (defn- dispatcher-for [rules &opt command & args]
   (unless command (break))
-  (let [odd? (odd? (length rules))
-        rule (get (find (fn [[pat dest]]
-                          (case (type pat)
-                            :function (pat command ;args)
-                            :keyword  (= pat (keyword command))
-                            :string   (= pat command)
-                            :tuple    (if (keyword? (first pat))
-                                        (index-of (keyword command) pat)
-                                        (peg/match pat command))
-                            (abort "Invalid rule pattern: %q" pat)))
-                        (if command
-                          (partition 2 (slice rules 0 (if odd? -2 -1)))
-                          []))
-                  1 (cond (not odd?) nil
-                          (string? (last rules)) |[:exec (last rules) ;$&]
-                          (last rules)))
+  (let [pair (find-rule rules command args)
+        rule (if pair (in pair 1) (rule-fallback rules))
         # with-doc wraps non-struct destinations in {:fn ... :doc ...}. A cmd
         # struct has no :fn, so it falls through to :struct untouched.
         dest (if (and (dictionary? rule) (get rule :fn)) (rule :fn) rule)
@@ -115,29 +153,8 @@
                (abort "Invalid rule destination: %q" dest))]
     (log 2 "dispatcher-for=%q" spec)
     (case (first spec)
-      :eval (let [f (in spec 1)]
-              (unless (> (length spec) 1)
-                (errorf "Invalid eval dispatcher for: %s" command))
-              (fn [op]
-                (let [{:cmd cmd :file file}
-                      (if (struct? f) f {:cmd f :file (dyn :script)})
-                      cargs (slice spec 2)]
-                  (case op
-                    :which (echo (string/join [file ;cargs] " "))
-                    :help  (help [file ;cargs])
-                    :dump  (print-specs (if (struct? f) file))
-                    :call  (cmd command ;cargs)))))
-      :exec (let [sargs (slice spec 1)]
-              (if (empty? sargs)
-                (abort "Unknown command: %q" command)
-                (if-let [pargs (resolve ;sargs)]
-                  (fn [op]
-                    (case op
-                      :which (echo (string/join pargs " "))
-                      :help (help pargs)
-                      :dump (print-specs (first pargs))
-                      :call (os/execute pargs :p)))
-                  (abort "Unknown command: %q" command))))
+      :eval (eval-dispatcher command spec)
+      :exec (exec-dispatcher command spec)
       (abort "Unknown command: %q" command))))
 
 (defdyn *script* "TODO")
@@ -217,17 +234,19 @@
   ~(,dispatch-1 ,(dyn :current-file) [,;rules] ;args))
 
 (defmacro hey [& args]
+  # The stderr buffer is deliberately not named `error`; that shadows the
+  # function this needs to call to re-raise the subcommand's own error.
   ~(do (def output @"")
-       (def error @"")
+       (def errout @"")
        (cond ,(tuple '$? (path :bin "hey") ;args
                       '> '(unquote output)
-                      '> '[stderr error])
+                      '> '[stderr errout])
              (do (when (debug?)
-                   (log "stderr: %s" error))
+                   (log "stderr: %s" errout))
                  (,string/chomp output))
-             (string/has-prefix? "error: " error)
-             (error (slice error 0 8))
-             (do (echo :err (string/chomp error))
+             (string/has-prefix? "error: " errout)
+             (error (,string/no-prefix "error: " (,string/chomp errout)))
+             (do (echo :err (,string/chomp errout))
                  (,exit 16)))))
 
 (defmacro hey! [& args]
@@ -235,12 +254,12 @@
 
 (defmacro hey? [& args]
   ~(do (def output @"")
-       (def error @"")
+       (def errout @"")
        (if ,(tuple '$? (path :bin "hey") ;args
                    '> '(unquote output)
-                   '> '[stderr error])
+                   '> '[stderr errout])
          (do (when (debug?)
-               (log "stderr: %s" error))
+               (log "stderr: %s" errout))
              (,string/chomp output)))))
 
 (defmacro hey* [& args]

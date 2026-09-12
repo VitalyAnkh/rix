@@ -1,4 +1,5 @@
 (import spork/path)
+(import spork/sh)
 (use ./lib)
 
 (defn new [dir &opt raw?]
@@ -20,7 +21,7 @@
                   (os/rm file)
                   key)
                 (do (unless (path/directory? dir)
-                      (os/execute ["mkdir" "-p" dir] :px))
+                      (sh/create-dirs dir))
                     (with-umask 8r077
                       (spit file ((if raw? identity marshal) val)))
                     val))))

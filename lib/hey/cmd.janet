@@ -10,21 +10,10 @@
 (def- *commands* @{})
 (def- *argtypes* '[&opts &args &])
 
-# TODO: Use me
-# (defn- read-arg-value [spec val]
-#   (cond (tuple? spec) (and (index-of val spec) val)
-#         (= spec :boolean) (index-of val ["yes" "no" "on" "off" "0"" 1" "true" "false"])
-#         (= spec :number) (scan-number (or val ""))
-#         (= spec :path) (if (path/exists? val) val)
-#         (= spec :file) (if (path/file? val) val)
-#         (= spec :dir) (if (path/directory? val) val)
-#         (= (type val) spec) val))
-
 (defn- make-arg [arg]
   (let [spec (if (tuple? arg) arg [arg :string nil])]
     {:name (in spec 0)
-     # :value (partial read-arg-value (get spec 1))
-     :default |(get spec 2)}))
+     :default (get spec 2)}))
 
 (defn- make-opt [name spec]
   (let [spec (if (tuple? spec) spec [spec])
@@ -60,7 +49,7 @@
                        idx (length optbinds)]
                    (array/push optbinds opt)
                    (each o (get opt :options) (put optmap o idx)))
-          '& (if (> (length restbinds) 2)
+          '& (if (>= (length restbinds) 2)
                (errorf "Too many & binds for %q" arg)
                (array/push restbinds arg)))))
     (with-syms [$rest $argv $all $argmap $optbinds $optmap]
@@ -108,7 +97,7 @@
                  (let [sym (get o :name)]
                    ~((def ,sym (or (get ,$argmap ',sym)
                                    ,(when-let [args (get o :arguments)
-                                               vals (map |(($ :default)) args)]
+                                               vals (map |($ :default) args)]
                                       (if (or (get o :multiple)
                                               (> (length args) 1))
                                         vals (first vals))))))))
@@ -123,7 +112,7 @@
 
 (defmacro defcmd-1 [type name argspec & body]
   ~(upscope
-    (,(case type :public 'def :private 'def- (errorf "Unknown type: %s"))
+    (,(case type :public 'def :private 'def- (errorf "Unknown type: %s" type))
       ,name (cmdfn [,;argspec] ,;body))
     ,(unless (= name 'main)
        ~(,defcmd* ',name ,name ,(path/abspath (dyn :current-file ""))))))

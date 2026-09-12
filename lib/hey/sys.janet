@@ -1,3 +1,7 @@
+# lib/hey/sys.janet
+#
+# An API for the desktop session: sounds, notifications, and the clipboard.
+
 (import spork/path)
 (use ./lib)
 (use sh)

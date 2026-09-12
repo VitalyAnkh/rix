@@ -6,26 +6,35 @@
 (import spork/path)
 (use ./lib)
 
+(defn- header-lines
+  ``Return FILE's leading comment block as lines, with leading "# " stripped.
+
+  Returns nil if FILE isn't a readable script, and an empty array if it is one
+  but has no comment header.``
+  [file]
+  (when (and file (= :file (os/stat file :mode)))
+    (with [f (file/open file :rn)]
+      (when (string/has-prefix? "#!/" (string (or (file/read f :line) "")))
+        (def peg (peg! '(* "#" (between 0 1 " "))))
+        (def out @[])
+        (var line nil)
+        (while (set line (file/read f :line))
+          (unless (string/has-prefix? "#" (string line))
+            (break))
+          (array/push out (string/trimr (string (peg/replace peg "" line)))))
+        out))))
+
 (defn help [[file & _args] &opt output]
+  # TODO: Parse these doc headings into table
+  # TODO: Search sub-directory for extra subcommands.
   (unless (path/exists? file)
     (errorf "File does not exist: %s" (path/abbrev file)))
+  (def lines (or (header-lines file)
+                 (abort "Not a script: %s" (path/abbrev file))))
+  (when (empty? lines)
+    (abort "No documentation for %s" (path/abbrev file)))
   (with-dyns [*out* (or output stdout)]
-    (with [f (file/open file :rn)]
-      (let [peg (peg! '(* "#" (between 0 1 " ")))
-            buf @""]
-        (var line (file/read f :line))
-        (unless (string/has-prefix? "#!/" line)
-          (abort "Not a script: %s" (path/abbrev file)))
-        (while (set line (file/read f :line))
-          (unless (string/has-prefix? "#" line)
-            (break))
-          (buffer/push buf (peg/replace peg "" line)))
-        (when (empty? buf)
-          (abort "No documentation for %s" (path/abbrev file)))
-        (echo (string/chomp buf)))))
-    # TODO: Parse these doc headings into table
-    # TODO: Search sub-directory for extra subcommands.
-  )
+    (echo (string/join lines "\n"))))
 
 (defn with-doc
   ``Annotate a dispatch destination with a one-line description.
@@ -47,36 +56,21 @@
   ``Return the one-line description on the second line of script FILE, or nil.
   This is the same convention config/zsh/completions/_hey's __hey_scan uses.``
   [file]
-  (when (and file (= :file (os/stat file :mode)))
-    (with [f (file/open file :rn)]
-      (file/read f :line)  # the shebang
-      (when-let [line (file/read f :line)
-                 line (string/trim (string line))]
-        (when (string/has-prefix? "#" line)
-          (let [desc (string/trim (slice line 1))]
-            (unless (or (empty? desc) (= desc "TODO"))
-              desc)))))))
+  (when-let [lines (header-lines file)
+             desc (string/trim (get lines 0 ""))]
+    (unless (or (empty? desc) (= desc "TODO"))
+      desc)))
+
+(defn rule-pairs
+  ``Partition RULES into [pattern destination] pairs, dropping the fallback.``
+  [rules]
+  (partition 2 (slice rules 0 (if (odd? (length rules)) -2 -1))))
 
 
 ## * ZSH Completion
 
 # A script's comment header is the single source of truth for its flags and
 # arguments. config/zsh/completions/_hey needs it to generate a _arguments call.
-
-(defn- header-lines
-  "Return FILE's leading comment block as lines with leading '# ' stripped."
-  [file]
-  (def out @[])
-  (when (and file (= :file (os/stat file :mode)))
-    (with [f (file/open file :rn)]
-      (def peg (peg! '(* "#" (between 0 1 " "))))
-      (var line (file/read f :line))
-      (when (string/has-prefix? "#!/" (string (or line "")))
-        (while (set line (file/read f :line))
-          (unless (string/has-prefix? "#" (string line))
-            (break))
-          (array/push out (string/trimr (string (peg/replace peg "" line))))))))
-  out)
 
 (defn- header-sections
   "Group LINES by their `ALL CAPS:` headings, into @{HEADING @[line ...]}."
@@ -235,7 +229,7 @@
   script FILE's comment header. Returns an array of spec strings, empty if the
   header declares neither.``
   [file]
-  (def sections (header-sections (header-lines file)))
+  (def sections (header-sections (or (header-lines file) [])))
   (def out @[])
   (each [head body] (header-entries (get sections "OPTIONS" []))
     (array/push out ;(option->specs head body)))
@@ -295,8 +289,7 @@
   script file. Rules with neither a keyword nor an explicit :name are omitted.``
   [rules]
   (def out @[])
-  (def odd? (odd? (length rules)))
-  (each [pat dest] (partition 2 (slice rules 0 (if odd? -2 -1)))
+  (each [pat dest] (rule-pairs rules)
     (let [info (if (dictionary? dest) dest {})
           docstring (or (get info :doc) (synopsis (get info :file)) "")
           names (cond (keyword? pat) [(string pat)]

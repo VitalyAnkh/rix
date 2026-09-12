@@ -1,8 +1,6 @@
 (import spork/path)
 (import spork/json)
 
-# % and mod are both modulo functions. We don't need two, so I take over one of
-# them for this common use-case:
 (def fmt string/format)
 
 (defmacro ignore-errors
@@ -42,31 +40,31 @@
   [value]
   (get *atomic-types* (type value) false))
 
-(defn falsey? [val]
-  (or (not val)
-      (ignore-errors (empty? val))))
-
 (defn tuple/type? [val type]
   (and (tuple? val)
        (or (nil? type)
            (= (tuple/type val) type))))
 
+(defn case-body
+  ``Expand CLAUSES, a list of pattern/body pairs with an optional fallback, into
+  the body of a cond. Use TESTFN to test each pattern.``
+  [testfn clauses]
+  (def fallback (if (odd? (length clauses)) (last clauses)))
+  [;(catseq [[pred body] :in (partition
+                              2 (if fallback (slice clauses 0 -2) clauses))]
+      [(testfn pred) body])
+   fallback])
+
 (defmacro case*
   "Like case, but dispatch values can be tuples to represent one-off matches."
   [value & clauses]
-  (let [fallback (if (odd? (length clauses)) (last clauses))
-        $var (gensym)]
+  (with-syms [$var]
     ~(let [,$var ,value]
-       (cond ,;(reduce
-                 (fn [init [pred body]]
-                   (array/concat
-                    init ~(,(if (tuple/type? pred :brackets)
+       (cond ,;(case-body (fn [pred]
+                            (if (tuple/type? pred :brackets)
                               ~(index-of ,$var ,pred)
-                              ~(= ,$var ,pred))
-                            ,body)))
-                 @[] (partition
-                      2 (if fallback (slice clauses 0 -2) clauses)))
-               ,fallback))))
+                              ~(= ,$var ,pred)))
+                          clauses)))))
 
 (defn array/remove-elt [arr elt &opt all?]
   (var idx nil)
@@ -85,30 +83,6 @@
   (let [val (take-while pred ind)
         len (length val)]
     (unless (zero? len) (array/remove ind 0 len))
-    val))
-
-(defn take-until! [pred ind]
-  (let [val (take-until pred ind)
-        len (length val)]
-    (unless (zero? len) (array/remove ind 0 len))
-    val))
-
-(defn drop! [n ind]
-  (let [val (drop n ind)
-        len (length val)]
-    (unless (zero? len) (array/remove ind 0 len))
-    val))
-
-(defn drop-while! [pred ind]
-  (let [val (drop-while pred ind)
-        len (length val)]
-    (unless (zero? len) (array/remove ind (- len) len))
-    val))
-
-(defn drop-until! [pred ind]
-  (let [val (drop-until pred ind)
-        len (length val)]
-    (unless (zero? len) (array/remove ind (- len) len))
     val))
 
 (defn string/chomp [str]
@@ -141,7 +115,8 @@
   (var format :raw)
   (var color nil)
   (var output stdout)
-  (each k (take-while! keyword? args)
+  (def flags (take-while! keyword? args))
+  (each k flags
     (case* k
       :raw  (set format :raw)
       :json (set format :json)
@@ -161,12 +136,14 @@
             :json (print (json/encode val "  " "\n"))
             (errorf "Invalid format: %s" format))))
     (each v args
-      (echo format ;(if color [color] []) v))))
+      (echo ;flags v))))
 
 (defn echof [& args]
-  (var args (array ;args))
-  (echo ;(take-while! keyword? args)
-         (string/format (first args) ;(slice args 1))))
+  (def args (array ;args))
+  # take-while! mutates args, so pull out the flags before reading the format
+  # string from what's left.
+  (def flags (take-while! keyword? args))
+  (echo ;flags (string/format (first args) ;(slice args 1))))
 
 # init.janet's with-handled-exits turns :exit-handled on, so that exit unwinds
 # through its handlers instead of leaving them unrun. These live here rather
@@ -193,12 +170,10 @@
 (defn path/no-ext
   "Remove any (or a specific) file extension from PATH."
   [path & exts]
-  (if (empty? exts)
-    (string/join (slice (string/split "." path) 0 -2) ".")
-    (or (when-let [ext (path/ext path)]
-          (when (index-of ext exts)
-            (string/no-suffix ext path)))
-        path)))
+  (or (when-let [ext (path/ext path)]
+        (when (or (empty? exts) (index-of ext exts))
+          (string/no-suffix ext path)))
+      path))
 
 (defn path/sibling [type path & exts]
   (when-let [base (path/no-ext path ;exts)
@@ -218,10 +193,8 @@
 (defn path/executable?
   "Return true if PATH exists and is executable."
   [path]
-  (when-let [perms (os/stat path :permissions)]
-    # TODO: Use bitwise ops instead
-    (and (find |(= (chr "x") (get perms $)) [2 5 8])
-         true)))
+  (when-let [perms (os/stat path :int-permissions)]
+    (not= 0 (band perms 8r111))))
 
 (defn path/exists? [path]
   (truthy? (os/stat path :mode)))
@@ -233,8 +206,8 @@
   (= (os/stat path :mode) :directory))
 
 (defn path/symlink? [path]
-  (and (os/stat path :mode)
-       (ignore-errors (os/readlink path))))
+  # os/stat follows the link, so a dangling symlink would report nil.
+  (= (os/lstat path :mode) :link))
 
 (def- *xdg*
   (delay {:bin     (os/getenv "XDG_BIN_HOME")
@@ -251,12 +224,13 @@
              ;args))
 
 (def- *flake-info*
-  # Generated by modules/hey.nix
-  (json/decode (slurp (path/xdg :data "hey/info.json"))
-               :keywords true))
+  # Generated by modules/hey.nix. Deferred like *xdg* and *flake* below, so a
+  # missing info.json doesn't break every import of hey.
+  (delay (json/decode (slurp (path/xdg :data "hey/info.json"))
+                      :keywords true)))
 
 (defn flake/info [& args]
-  (get-in *flake-info* args))
+  (get-in (*flake-info*) args))
 
 (def- *flake*
   (delay {:path  (os/realpath
@@ -331,15 +305,13 @@
           [p])))
    ;args))
 
-(defmacro log [& args]
-  (var args (array ;args))
-  (var message (first args))
-  (var level 1)
-  (take! 1 args)
-  (when (number? message)
-    (set level message)
-    (set message (first args))
-    (take! 1 args))
+(defmacro log
+  "Print MESSAGE to stderr, but only at debug LEVEL (1 by default) or above."
+  [& args]
+  (def leveled? (number? (first args)))
+  (def level    (if leveled? (first args) 1))
+  (def message  (in args (if leveled? 1 0)))
+  (def args     (slice args (if leveled? 2 1)))
   ~(when (>= (dyn :debug -1) ,level)
      (with-dyns [*out* stderr]
        (echof :debug (string "LOG[%s]: " ,message)
@@ -351,18 +323,3 @@
   "Return ARGS (a tuple) if no element is nil. An empty tuple otherwise."
   [& args]
   (if (every? args) (map string args) []))
-
-(defn plist/index [plist key]
-  (label result
-    (each i (range 0 (/ (length plist) 2))
-      (def i (* i 2))
-      (if (= (in plist i) key)
-        (return result (+ i 1))))))
-
-(defn plist/get [plist key]
-  (when-let [idx (plist/index plist key)]
-    (in plist idx)))
-
-(defn plist/put [plist key val & rest]
-  (when-let [idx (plist/index plist key)]
-    (put plist idx val)))
