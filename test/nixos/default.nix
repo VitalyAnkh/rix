@@ -9,7 +9,7 @@
 # individual suites addressable while iterating:
 #
 #   nix build --no-link .#checks.x86_64-linux.nixos
-#   nix build --no-link .#checks.x86_64-linux.nixos.passthru.lib-attrs
+#   nix build --no-link .#checks.x86_64-linux.nixos.passthru.lib-modules
 #
 # 'flake' comes from the extra callPackage argument that lib/nixos.nix hands to
 # checks; the suites need this flake's own inputs to evaluate our modules.

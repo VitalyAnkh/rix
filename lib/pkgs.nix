@@ -1,28 +1,33 @@
-# lib/pkgs.nix --- TODO
+# lib/pkgs.nix --- helpers that need a package set
 #
-# TODO
+# Decorates nixpkgs with extra functions, providing the two builders my modules
+# reach for often enough to be worth a name. Modules get at them through hey.lib
+# (flattened) or hey.lib.pkgs (namespaced).
 
-{ self, lib, pkgs, ... }:
+{ lib, pkgs, ... }:
 
-with builtins;
-with lib;
-rec {
-  boolTo = bool: trueStr: falseStr:
-    if (bool == false || bool == null || bool == 0)
-    then falseStr
-    else trueStr;
-
-  boolToStr = bool: boolTo bool "true" "false";
-
+let
+  inherit (builtins) hashString;
+  inherit (lib) head optionalAttrs toList;
+in {
+  # mkWrapper :: (derivation | listOf derivation) -> string -> derivation
+  #
+  # Joins PACKAGE, or every derivation in a list of them, into one output that
+  # POSTBUILD can wrapProgram. The result is named after the first package.
   mkWrapper = package: postBuild:
-    let name = if isList package then elemAt package 0 else package;
-        paths = if isList package then package else [ package ];
-    in pkgs.symlinkJoin  {
+    let paths = toList package;
+        first = head paths;
+    in pkgs.symlinkJoin {
       inherit paths postBuild;
-      name = "${name}-wrapped";
+      name = "${first.pname or first.name}-wrapped";
       buildInputs = [ pkgs.makeWrapper ];
     };
 
+  # mkLauncherEntry :: string -> attrs -> derivation
+  #
+  # A desktop entry for TITLE, meant for a launcher rather than an application
+  # menu. The file name is a hash of the title and the command, so two entries
+  # that differ in only one of them still get separate files.
   mkLauncherEntry = title: {
       prefix ? "launcher-",
       description ? "",
@@ -31,26 +36,9 @@ rec {
       categories ? []
     }: pkgs.makeDesktopItem ({
       inherit icon exec categories;
-      name = "${prefix}${hashString "md5" exec}";
+      name = "${prefix}${hashString "md5" "${title}\n${exec}"}";
       desktopName = title;
-    } // (if description != "" then {
-      genericName = description;
-    } else {}));
-
-  toPrettyJSON = attrs:
-    readFile ((pkgs.formats.json {}).generate "prettyJSON" attrs);
-
-  compileSCSS = file:
-    let fileName = removeSuffix ".scss" (baseNameOf file);
-        compiledStyles =
-          pkgs.runCommand "compileScssFile" { buildInputs = [ pkgs.sass ]; } ''
-            mkdir "$out"
-            scss --sourcemap=none \
-                 --no-cache \
-                 --style compressed \
-                 --default-encoding utf-8 \
-                 "${file}" \
-                 >>"$out/${fileName}.css"
-          '';
-    in readFile "${compiledStyles}/${fileName}.css";
+    } // optionalAttrs (description != "") {
+      comment = description;
+    });
 }
